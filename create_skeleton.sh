@@ -24,7 +24,7 @@ fi
 
 
 
-
+#### Here I store comments on what is what
 #### summary stats file: SNPID, CHR, POS, then BETA.biom, SE.biom, PVAL.biom, N.biom in biom_chrXX.RData where biom is a code (ht), df
 #### summary stats file: SNPID, CHR, POS, then BETA.cc, SE.cc, PVAL.cc, N.cc, Ncases.cc in cc_chrXX.RData where cc is a code (SCZ...).df
 ##name of dataframes: biomarker or cc
