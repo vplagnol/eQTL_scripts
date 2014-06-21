@@ -1,0 +1,85 @@
+library(ggplot2)
+library(snpStats)
+source('scripts/final_scripts/tools.R')
+
+######### this function plots correlations between one SNP and multiple genes, combining all studies
+
+gene.names <- c()
+snp.name <- c()
+choice.sets <- list( LCL_dexamethasone_DiRienzo = c('logFC'), WB_dexamethasone_DiRienzo = c('logFC'))  ###key argument
+
+
+snp.name <- 'rs11211317'
+gene <- c('BIRC3', 'GSTM3')
+
+
+
+
+all.plots <- list()
+plot.nb <- 0
+
+n.sets <- length(choice.sets)
+message('Number of sets: ', n.sets)
+
+for (i in 1:n.sets) {
+  
+  geno <- paste('data/', names(choice.sets)[i], '/genotypes/chr', chromosome, sep = '')
+  message('Loading ', geno)
+  load(geno)
+  geno.num <- as(genotypes$genotypes[, snp.name], 'numeric')
+  A1 <- genotypes$map[ snp.name, 'allele.1']
+  A2 <- genotypes$map[ snp.name, 'allele.2']
+  alleles <- c( paste(c(A1, A1), collapse = ''), paste(c(A1, A2), collapse = ''), paste(c(A2, A2), collapse = ''))
+  geno <- alleles[ geno.num + 1 ]
+  for (condition in choice.sets[[ i ]]) {
+    
+    input.expression <- paste('data/', names(choice.sets)[i], '/expression_data/expression_', condition, '.RData', sep = '')
+    message('Condition ', condition, ', file: ', input.expression)
+    load(input.expression)
+    
+    support <- get(paste('support', condition, sep = '.'))
+    expr.data <- get(condition)
+    expr.data <- expr.data[  which(support$Gene.name == gene), ]  ##this is where the 
+    
+    if (class(expr.data) == 'matrix') {  ## if we have multiple probes
+      expr.data <- expr.data[which.max(apply(expr.data, MAR  = 1, FUN = median)),]  ##take the highest expressing probe for now
+    }
+    
+    
+    pretty.type=pretty.names(names(choice.sets)[i], condition)
+    my.data <- data.frame( geno = factor(geno), expr = as.numeric(expr.data), type=pretty.type)
+    all.data <- rbind(all.data, my.data)
+               }
+}
+
+## Calc P.values
+P.value <- rep(NA, length(unique(all.data$type)))
+names(P.value) <- as.character(unique(all.data$type))
+  for ( t in 1:length(names(P.value))){
+        my.dset <- names(P.value)[t]
+            P.value[t] <- cor.test(as.numeric(all.data$geno[all.data$type == my.dset]), all.data$expr[all.data$type == my.dset])$p.value
+      }
+
+                                        #long cut way to find number of facets
+  len <- length(levels(all.data$type))
+  vars <- data.frame(expand.grid(levels(all.data$type)))
+  colnames(vars) <- c('type')
+  dat <- data.frame(x = rep(2, len), y = min(all.data$expr), type=vars, labs=paste("P-value=", signif(P.value, 3), sep=""))
+
+
+  #pdf(output.pdf, width = 9, height = 4)
+  my.plot <- ggplot(data=all.data, aes(x = factor(geno), y = expr), xlab = snp.name) +
+      geom <- jitter(colour='grey50') +
+        geom <- boxplot(fill = "grey80", position=position <- dodge(1), alpha=0.5) +
+          theme <- bw() +
+            xlab(snp.name) +
+              ylab (paste(gene, 'expression')) +
+                facet <- grid(. ~ type) +
+                  geom <- text(aes(x, y, label=labs, group=NULL),data=dat)
+  ggsave (filename = output.pdf, plot = my.plot, width = len*4, height = 4)
+  print(output.pdf)
+}
+
+
+
+

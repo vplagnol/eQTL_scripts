@@ -1,0 +1,86 @@
+load('data/monocytes_Knight/modules/LPS24_all_modules.RData')
+load('data/monocytes_Knight/expression_data/expression_LPS24.RData')
+
+library(snpStats)
+
+
+
+my.genes <- scan('data/monocytes_Knight/data/IFNB1_targets.tab', what = character())
+for (i in 1:length(list.modules)) {
+  n.genes <- sum( list.modules[[i]]$Gene.name %in% my.genes )
+  if (n.genes > 20) {
+    message(i, ' ', n.genes)
+  }
+}
+
+
+
+module.number <- 949
+my.final.tab <- data.frame( module.number = 1:length(list.modules), n.independent.signals = NA)
+
+
+for (module.number in 1:length(list.modules)) {
+  message('Looking at module ', module.number)
+  covariates <- NULL
+  chrom.loc <- unique(list.modules[[ module.number ]]$chromosome)
+  load(paste('data/monocytes_Knight/genotypes/chr', chrom.loc, sep = ''))
+  expression.data <- LPS24[list.modules[[ module.number ]]$ProbeID, ]
+  genotype.data <- as(genotypes$genotypes[, unique(list.modules[[ module.number ]]$SNP) ], 'numeric')
+  gene.names <- list.modules[[ module.number ]]$Gene.name
+
+  covar <- as.numeric(gsub(pattern = '^Fairfax_', replacement = '', dimnames(expression.data)[[2]]))
+  covar <- ifelse (covar %in% 1:288, 1, 2)
+  test <- stepwise.analysis ( expression.data, genotype.data, covar.vector = covar, verbose = FALSE, snp.name = list.modules[[ module.number ]]$SNP[1], gene.names = gene.names)
+  my.final.tab$n.independent.signals[ module.number ] <- test$nsteps
+  #test <- correct.module.pvalues ( expression.data, genotype.data, gene.names = gene.names, verbose = TRUE)
+  #print(table(test$corrected.pvalue < 0.001))
+}
+
+write.csv(x = my.final.tab, file = 'monocytes_Knight_trans.csv', row.names = FALSE)
+stop()
+
+
+
+
+
+load('data/monocytes_Knight/genotypes/chr9')
+shared.samples <- intersect(dimnames(genotypes$genotypes)[[1]], dimnames(LPS24)[[2]])
+genotypes$genotypes <- genotypes$genotypes[ shared.samples, ]
+LPS24 <- LPS24[, shared.samples]
+my.SNP.chr9 <- as.numeric((genotypes$genotypes[, 'rs3898946'])) - 1
+genotypes$genotypes <- genotypes$genotypes[ shared.samples, ]
+load('data/monocytes_Knight/genotypes/chr19')
+genotypes$genotypes <- genotypes$genotypes[ shared.samples, ]
+my.SNP.chr19 <- as.numeric((genotypes$genotypes[, 'rs7260407'])) - 1
+
+
+shared.genes <- intersect(list.modules[[125]]$Gene.name, list.modules[[949]]$Gene.name)
+print(head(list.modules[[125]]))
+print(subset(list.modules[[125]], Gene.name %in% c('OAS2', 'OAS3')))
+
+OAS2.probe <- 'ILMN_1674063'
+OAS3.probe <- 'ILMN_2184262'
+
+print(head(list.modules[[949]]))
+print(cor.test(LPS24[OAS2.probe,], LPS24[OAS3.probe,]))
+
+#ILMN_2307903
+#ILMN_1766955
+print(support.LPS24['ILMN_1687384',])
+control <- (LPS24['ILMN_1687384',] + LPS24['ILMN_2347798',])/2
+#control <- (LPS24['ILMN_1766955',] + LPS24['ILMN_2307903',])/2
+
+mod1 <- lm ( LPS24['ILMN_1687384',] ~ LPS24['ILMN_1798181',])
+mod2 <- lm ( LPS24['ILMN_1687384',] ~ LPS24['ILMN_1798181',] + my.SNP.chr9)
+mod3 <- lm ( LPS24['ILMN_1687384',] ~ LPS24['ILMN_1798181',] + my.SNP.chr19)
+
+print(support.LPS24['ILMN_1687384',])
+mod1 <- lm ( LPS24['ILMN_1687384',] ~ control)
+mod2 <- lm ( LPS24['ILMN_1687384',] ~ control + my.SNP.chr9)
+mod3 <- lm ( LPS24['ILMN_1687384',] ~ control + my.SNP.chr19)
+
+
+
+mod1 <- lm ( LPS24[OAS2.probe,] ~ LPS24[OAS3.probe,])
+mod2 <- lm ( LPS24[OAS2.probe,] ~ LPS24[OAS3.probe,] + my.SNP.chr9)
+mod3 <- lm ( LPS24[OAS2.probe,] ~ LPS24[OAS3.probe,] + my.SNP.chr19)
