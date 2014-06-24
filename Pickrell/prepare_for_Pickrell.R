@@ -2,8 +2,7 @@
 
 
 
-prepare.Pickrell.set <- function ( choice.sets, min.MAF = 0.03, level = 'probe' ) {
-  base.folder <- '/cluster/project8/vyp/eQTL_integration'
+prepare.Pickrell.set <- function ( choice.sets, min.MAF = 0.03, level = 'probe', base.folder = '/cluster/project8/vyp/eQTL_integration') {
   
   source(paste(base.folder, '/scripts/Pickrell/create_Pickrell_input.R', sep = ''))
   source(paste(base.folder, '/scripts/plotting_functions/gviz_eqtls_v2.R', sep = ''))
