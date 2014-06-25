@@ -1,25 +1,39 @@
 #################
 ## Paths for submission of scripts:
-cluster.folder = '/scratch2/vyp-scratch2/kitty/eQTLs_integration/coloc/'
 path_to_Rscript = '/share/apps/R-3.0.1/bin/Rscript'
-# Create cluster folders: 
-cluster.out = paste(cluster.folder, 'out/', sep='')
-   if (!file.exists (cluster.out)) dir.create(cluster.out)
-cluster.error = paste(cluster.folder, 'error/', sep='')
-   if (!file.exists (cluster.error)) dir.create(cluster.error)
-cluster.submission = paste(cluster.folder, 'submission/', sep='')
-   if (!file.exists (cluster.submission)) dir.create(cluster.submission)
 
 #queue= 'queue14' # Submission queue to use: check which queu to use with: qstat -u "*"
 
 #################
-# Variables to set 
-eqtl.dataset1 <- 'monocytes_Knight' 
-eqtl.dataset2 <- 'Smith_macrophages'  
-cond.1="LPS24logFC"
+# Variables to set
+
+##kitty's version
+#eqtl.dataset1 <- 'monocytes_Knight' 
+#eqtl.dataset2 <- 'Smith_macrophages'  
+#cond.1="LPS24logFC"
+#cond.2="logFC"
+#basedir = "/cluster/project8/vyp/kitty/eQTL_scripts/" 
+#outdir = "/scratch2/vyp-scratch2/kitty/eQTLs_integration/coloc" 
+cluster.folder = '/scratch2/vyp-scratch2/kitty/eQTLs_integration/coloc/'
+
+##vincent's version
+eqtl.dataset1 <- 'LCL_dexamethasone_DiRienzo' 
+eqtl.dataset2 <- 'WB_dexamethasone_DiRienzo'  
+cond.1="logFC"
 cond.2="logFC"
-basedir = "/cluster/project8/vyp/kitty/eQTL_scripts/" 
-outdir = "/scratch2/vyp-scratch2/kitty/eQTLs_integration/coloc" 
+basedir = "/cluster/project8/vyp/eQTLs_integration/coloc"
+outdir = "/cluster/project8/vyp/eQTLs_integration/coloc"
+cluster.folder = '/cluster/project8/vyp/eQTL_integration/cluster'
+
+
+# Create cluster folders: 
+cluster.out = paste(cluster.folder, '/out/', sep='')
+   if (!file.exists (cluster.out)) dir.create(cluster.out)
+cluster.error = paste(cluster.folder, '/error/', sep='')
+   if (!file.exists (cluster.error)) dir.create(cluster.error)
+cluster.submission = paste(cluster.folder, '/submission/', sep='')
+   if (!file.exists (cluster.submission)) dir.create(cluster.submission)
+
 
 ################
 
