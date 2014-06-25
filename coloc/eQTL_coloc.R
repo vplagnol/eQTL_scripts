@@ -7,8 +7,8 @@ coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, results.folder, match
 
    ### HACK to make it work for the moment 
    #   For the dexa files, set eqtl.folder to empty 
-   eqtl.folder = "/cluster/project8/vyp/eQTL_integration/"
-   #eqtl.folder = ""
+   #eqtl.folder = "/cluster/project8/vyp/eQTL_integration/"
+   eqtl.folder = ""
    suppressPackageStartupMessages({
      require(VPlib);
      require(coloc);

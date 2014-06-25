@@ -6,7 +6,10 @@
 #$ -o /cluster/project8/vyp/kitty/cluster/out/ 
 #$ -e /cluster/project8/vyp/kitty/cluster/error/
 #$ -j y
+#$ -cwd 
 
 PATH=$PATH:\/share\/apps\/R-3.0.1\/bin\/
 Rscript main_eqtl_eqtl.R 
+
+
 

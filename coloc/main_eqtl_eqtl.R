@@ -6,18 +6,20 @@
 ##############################################
 
 # Base directory of the github repository 
-scripts.folder = "/cluster/project8/vyp/kitty/eQTL_scripts/"
+#scripts.folder = "/cluster/project8/vyp/kitty/eQTL_scripts/"
+scripts.folder = "/cluster/project8/vyp/eQTL_integration/scripts/"
 # Directory where the results will be stored 
-results.folder = "/cluster/project8/vyp/kitty/eQTL_scripts/coloc/results/"
+#results.folder = "/cluster/project8/vyp/kitty/eQTL_scripts/coloc/results/"
+results.folder = "/cluster/project8/vyp/eQTL_integration/coloc/"
 # Directory on the cluster where the data are stored  
 data.folder    = "/cluster/project8/vyp/eQTL_integration/data/"
 
-#dataset1 <- list ( LCL_dexamethasone_DiRienzo = 'logFC')
-#dataset2 <- list ( WB_dexamethasone_DiRienzo = 'logFC')
-dataset1 <- list ( monocytes_Knight = 'LPS24logFC')
-dataset2 <- list ( Smith_macrophages = 'logFC')
+dataset1 <- list ( LCL_dexamethasone_DiRienzo = 'logFC')
+dataset2 <- list ( WB_dexamethasone_DiRienzo = 'logFC')
+#dataset1 <- list ( monocytes_Knight = 'LPS24logFC')
+#dataset2 <- list ( Smith_macrophages = 'logFC')
 p12 <- 1e-6
-match.by <- "probe" # either probe of gene 
+match.by <- "gene" # either probe of gene 
 ##############################################
 
 eqtl.dataset1 <- names(dataset1)
@@ -26,10 +28,6 @@ cond.1 <- as.character(dataset1[[1]])
 cond.2 <- as.character(dataset2[[1]])
 
 source(paste(scripts.folder, "/coloc/eQTL_coloc.R", sep ='') )
-#eqtl.1="monocytes_Knight"    
-#eqtl.2="Smith_macrophages"     
-#condition.1="LPS24logFC"    
-#condition.2="logFC"
  
 eqtl.fname1 <- paste(data.folder, eqtl.dataset1, '/eQTLs/fgwas/fgwas_', cond.1, '_summary_eQTLs.csv', sep='')
 eqtl.fname2 <- paste(data.folder, eqtl.dataset2, '/eQTLs/fgwas/fgwas_', cond.2, '_summary_eQTLs.csv', sep='')
