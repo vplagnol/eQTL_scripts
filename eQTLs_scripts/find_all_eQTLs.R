@@ -15,11 +15,14 @@ source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
 
 
 
-run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 1e-5, min.MAF = 0.03, force = TRUE) {
+run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 5, min.MAF = 0.03, force = TRUE) {
   library(snpStats)
   library(MatrixEQTL)
-  temp.folder <- '/SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs'
+  #temp.folder <- '/SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs'
+  temp.folder <- '/scratch2/vyp-scratch2/vincent/eQTLs'
   base.folder <- '/cluster/project8/vyp/eQTL_integration'
+
+  if (pvOutputThreshold < 1) {stop('Probably a misspecification of the pvalue output threshold, it should be given as -log10(p)')}
   
   ##### basic option for matrixEQTL
   covariates_file_name <- character()
@@ -33,7 +36,7 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
   oFolder <- paste(base.folder, '/data/', dataset, '/eQTLs/matrixEQTL/', condition, sep = '')
   if (!file.exists(oFolder)) dir.create(oFolder)
   message('Output folder is ', oFolder)
-  output_file_name <- paste(oFolder, '/', condition, '_', region, '_pval', -log10(pvOutputThreshold), '.tab', sep = '')
+  output_file_name <- paste(oFolder, '/', condition, '_', region, '_pval', pvOutputThreshold, '.tab', sep = '')
 
 ######## Loading the genotype data
   message('Loading the genotype data')
@@ -126,7 +129,7 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
       gene = gene,
       cvrt = cvrt,
       output_file_name = output_file_name,
-      pvOutputThreshold = pvOutputThreshold,
+      pvOutputThreshold = 10^-(pvOutputThreshold),
       useModel = useModel,
       errorCovariance = errorCovariance,
       verbose = TRUE,
@@ -177,7 +180,7 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
 
 
 
-run.eQTL.selected <- function (genotypes, expression.matrix, expression.support = NULL, covariates = NULL, pvOutputThreshold = 10^(-2), min.MAF = 0.03) {
+run.eQTL.selected <- function (genotypes, expression.matrix, expression.support = NULL, covariates = NULL, pvOutputThreshold = 2, min.MAF = 0.03) {
   library(fork)
   library(MatrixEQTL)
   errorCovariance = numeric();
@@ -241,7 +244,7 @@ run.eQTL.selected <- function (genotypes, expression.matrix, expression.support 
     gene = gene,
     cvrt = cvrt,
     output_file_name = output.file,
-    pvOutputThreshold = pvOutputThreshold,
+    pvOutputThreshold = 10^(-pvOutputThreshold),
     useModel = useModel,
     errorCovariance = errorCovariance,
     verbose = TRUE,
