@@ -2,36 +2,46 @@
 # Written by Kitty Lo 
 # On 9th June 2014 
 ##########################
-# Variables to set 
 
-#setwd("/cluster/project8/vyp/eQTL_integration/") 
-#f1.name <- "data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS24_summary_eQTLs.csv" 
-#f2.name <- "data/Smith_macrophages/eQTLs/fgwas/fgwas_logFC_summary_eQTLs.csv" 
-#p12 <- 1e-6
-#pdf("/cluster/project8/vyp/kitty/tools/knight_smith.pdf", width = 9, height = 6)
-#outfname <- "/cluster/project8/vyp/kitty/tools/knight_smith.csv" 
-##########################
+coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, results.folder, match.by = "probe") { 
 
-coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, outfolder, condition) { 
+   ### HACK to make it work for the moment 
+   #   For the dexa files, set eqtl.folder to empty 
+   eqtl.folder = "/cluster/project8/vyp/eQTL_integration/"
+   #eqtl.folder = ""
    suppressPackageStartupMessages({
      require(VPlib);
      require(coloc);
    });
 
    if ( doPlot ) { 
-      plot.fld = paste(outfolder, "plot/", sep="")
-      pval.fld= paste(outfolder, "pval/", sep="")
-      dir.create(file.path(plot.fld), showWarnings = TRUE)
-      dir.create(file.path(pval.fld), showWarnings = TRUE)
+      plot.fld = paste(results.folder, "/plot/", sep="")
+      pval.fld= paste(results.folder, "/pval/", sep="")
+      if( !file.exists(plot.fld)) dir.create(file.path(plot.fld), showWarnings = TRUE)
+      if( !file.exists(pval.fld)) dir.create(file.path(pval.fld), showWarnings = TRUE)
    } 
 
    data1 <- read.csv(eqtl.f1, sep =',', stringsAsFactors = FALSE) 
    data2 <- read.csv(eqtl.f2, sep =',', stringsAsFactors = FALSE)
 
+
    # Work out what is the shared list of probes in the two datasets 
    d1.probes <- unique(data1$ProbeID) 
    d2.probes <- unique(data2$ProbeID) 
    common.probes <- d1.probes[which(d1.probes %in% d2.probes)] 
+
+   d1.genes <- unique(data1$Gene.name) 
+   d2.genes <- unique(data2$Gene.name) 
+   common.genes <- d1.genes[which(d1.genes %in% d2.genes)] 
+
+   print(common.genes) 
+   if (length(common.probes) == 0 & match.by == "probe") { 
+      stop("No common probes found between the two datasets") 
+   }
+ 
+   if (length(common.genes) == 0 & match.by == "gene") { 
+      stop("No common genes found between the two datasets") 
+   } 
 
    # Assume that the number of samples is the same for every line in each dataset 
    N1 <- data1$N[1] 
@@ -39,14 +49,29 @@ coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, outfolder, condition)
 
    res.all <- c() 
 
-   for (i in 1:length(common.probes))  { 
-      match.1 <- which(data1$ProbeID == common.probes[i]) 
-      match.2 <- which(data2$ProbeID == common.probes[i])
-   
+   if (match.by == "probe") { 
+       n.matches <- length(common.probes) 
+   }
+ 
+   if (match.by == "gene") { 
+       n.matches <- length(common.genes) 
+   } 
+
+   for (i in 1:n.matches)  { 
+      if (match.by == "probe") { 
+         match.1 <- which(data1$ProbeID == common.probes[i]) 
+         match.2 <- which(data2$ProbeID == common.probes[i])
+      }  
+      if (match.by == "gene") { 
+         match.1 <- which(data1$Gene.name == common.genes[i]) 
+         match.2 <- which(data2$Gene.name == common.genes[i])
+      }  
+
+
       chr.name <- as.character(data1[match.1[1], "CHR"])  
-      region.1 <- read.csv(as.character(data1[match.1[1], "output.file"]) ,
+      region.1 <- read.csv(paste(eqtl.folder, as.character(data1[match.1[1], "output.file"]), sep ='')  ,
                          sep='\t', stringsAsFactors = FALSE) 
-      region.2 <- read.csv(as.character(data2[match.2[1], "output.file"]) ,
+      region.2 <- read.csv(paste(eqtl.folder, as.character(data2[match.2[1], "output.file"]), sep='') ,
                          sep='\t', stringsAsFactors = FALSE) 
 
       pos.start <- min(min(region.1$POS), min(region.2$POS)) 
@@ -78,9 +103,20 @@ coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, outfolder, condition)
       min.pval.eqtl2 <- min(merged.data$PVAL.y)
       best.causal = as.character(coloc.res$results$snp[which.max(coloc.res$results$SNP.PP.H4)])
 
-      gene <- region.1[which(region.1$ProbeID == common.probes[i]), "Gene.name"]
+      if (match.by == "probe") { 
+          gene  <- region.1[which(region.1$ProbeID == common.probes[i]), "Gene.name"]
+          gene.used <- gene[1] 
+          probe.used <- common.probes[i] 
+      } 
+      if (match.by == "gene") { 
+          gene  <- data1[match.1[1], "Gene.name"] 
+          probe <- data1[match.1[1], "ProbeID"] 
+          gene.used <- gene[1] 
+          probe.used <- probe[i] 
+      } 
 
-      res.temp = data.frame(ProbeID = common.probes[i], Gene.name = gene[1], pos.start=pos.start, 
+      message("Gene: ", gene.used, ", Probe: ", probe.used) 
+      res.temp = data.frame(ProbeID = probe.used, Gene.name = gene.used, pos.start=pos.start, 
                             pos.end=pos.end, snp.eqtl1 = snp.eqtl1, snp.eqtl2=snp.eqtl2, 
                             min.pval.eqtl1=min.pval.eqtl1, min.pval.eqtl2=min.pval.eqtl2, 
                             best.causal=best.causal, pp3, pp4, files = NA) 
@@ -89,7 +125,7 @@ coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, outfolder, condition)
 
       if (pp4 < 0.9 & doPlot) { 
            pvalue_BF_df = as.data.frame(coloc.res[2])
-           region_name <- paste(gene[1], '.', common.probes[i], sep= '')
+           region_name <- paste(gene.used, '.', probe.used, sep= '')
            pvalue_BF_file <- paste(pval.fld, 'pval_', region_name, '.txt', sep="")
 
 ###############################
@@ -171,7 +207,7 @@ coloc.eqtl.eqtl <- function(eqtl.f1, eqtl.f2, p12, doPlot, outfolder, condition)
 
    res.all <- data.frame(res.all) 
    res.all <- res.all[with(res.all, order(pp4, decreasing=T)),]
-   outfname = paste(outfolder, 'summary.tab', sep='')
+   outfname = paste(results.folder, 'summary.tab', sep='')
    write.table(x =  res.all , file = outfname, row.names = FALSE, quote = FALSE, sep = '\t')
  
 } 
