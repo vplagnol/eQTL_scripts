@@ -18,19 +18,19 @@ coloc.eqtl.eqtl <- function(dataset1,
   if (!file.exists (cluster.submission)) dir.create(cluster.submission)
   
   main_script = paste(basedir, "/coloc/main_eqtl_eqtl.R", sep ='') 
-  outfld = paste(outdir, "/results/", eqtl.dataset1, "_", eqtl.dataset2, "/", 
-    cond.1, "_", cond.2, sep = '') 
+  outfld = paste(outdir, "/results/", eqtl.dataset1, "_", eqtl.dataset2, "/", cond.1, "_", cond.2, sep = '') 
   
-  script_to_submit = paste(cluster.submission, '/Submit_main_script_', eqtl.dataset1, '_', eqtl.dataset2, '_', 
-    cond.1, '_', cond.2, '.sh', sep='') 
+  script_to_submit = paste(cluster.submission, '/Submit_main_script_', eqtl.dataset1, '_', eqtl.dataset2, '_', cond.1, '_', cond.2, '.sh', sep='') 
   
   write(file=script_to_submit, '#!/bin/bash -l', append=F)
   write(file=script_to_submit, '#$ -S /bin/bash', append=T)
-  write(file=script_to_submit, paste(path_to_Rscript, main_script, eqtl.dataset1, eqtl.dataset2, 
-          cond.1, cond.2, outfld, basedir, sep=' '), append=T)
   
-  system(paste('qsub -cwd -l  h_vmem=8G -l tmem=8G -l h_rt=20:0:0 -o ', cluster.out, ' -e ', 
-               cluster.error, ' ',  script_to_submit, sep=''))  
+  write(file=script_to_submit, paste(path_to_Rscript, main_script, eqtl.dataset1, eqtl.dataset2, 
+          cond.1, cond.2, outfld, basedir, sep=' '), append=TRUE)
+
+  message('R script file written in ', main_script)
+
+  #system(paste('qsub -cwd -l  h_vmem=8G -l tmem=8G -l h_rt=20:0:0 -o ', cluster.out, ' -e ',  cluster.error, ' ',  script_to_submit, sep=''))  
 }
 
 
