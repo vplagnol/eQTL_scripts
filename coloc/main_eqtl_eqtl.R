@@ -1,6 +1,30 @@
 ###################################################
 ## This script is called from a submit bash script 
 
+
+getArgs <- function() {
+  myargs.list <- strsplit(grep("=",gsub("--","",commandArgs()),value=TRUE),"=")
+  myargs <- lapply(myargs.list,function(x) x[2] )
+  names(myargs) <- lapply(myargs.list,function(x) x[1])
+  return (myargs)
+}
+
+dataset1 <- 'default'
+dataset2 <- 'default'
+cond1 <- 'default'
+cond2 <- 'default'
+
+myArgs <- getArgs()
+
+if ('dataset1' %in% names(myArgs)) dataset1 <- as.character( myArgs[[ 'dataset1' ]])
+if ('dataset2' %in% names(myArgs)) dataset2 <- as.character( myArgs[[ 'dataset2' ]])
+if ('cond1' %in% names(myArgs)) cond1 <- as.character( myArgs[[ 'cond1' ])]
+if ('cond2' %in% names(myArgs)) cond2 <- as.character( myArgs[[ 'cond2' ])]
+if ('match.by' %in% names(myArgs)) match.by <- as.character( myArgs[[ 'match.by' ])]
+
+if (sum(c(dataset1, dataset2, cond1, cond2) == 'default') > 0) stop('All parameters must be set')
+
+
 ##############################################
 ## Variables to set 
 ##############################################
