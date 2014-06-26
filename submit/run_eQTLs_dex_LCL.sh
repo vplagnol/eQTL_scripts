@@ -15,6 +15,9 @@ source('scripts/eQTLs_scripts/find_all_eQTLs.R')
 ### define the dataset(s) of interest
 dataset <- '$dataset'
 condition <- '$condition'
+choice.sets <- list()
+choice.sets[[ dataset ]] <- condition
+
 
 ### define the slice we are looking at
 
@@ -22,14 +25,11 @@ condition <- '$condition'
 #  my.tab <- run.eQTL ( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 5, force = TRUE)
 #}
 
-source('scripts/Pickrell/prepare_for_Pickrell.R')
-choice.sets <- list()
-choice.sets[[ dataset ]] <- condition
-test <- prepare.Pickrell.set(choice.sets)
+#source('scripts/Pickrell/prepare_for_Pickrell.R')
+#test <- prepare.Pickrell.set(choice.sets)
 
 source('scripts/transeQTL_scripts/find_all_trans_eQTLs.R')
-
-res <- find.all.trans.eQTLs ( choice.sets, min.MAF = 0.03, min.gene.module = 6, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
+res <- find.all.trans.eQTLs ( choice.sets, min.MAF = 0.03, min.gene.module = 4, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
 
 " > $Rscript
     

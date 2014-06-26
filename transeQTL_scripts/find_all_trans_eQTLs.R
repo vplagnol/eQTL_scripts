@@ -7,7 +7,7 @@ plot <- FALSE
 
 
 
-find.all.trans.eQTLs <- function( choice.sets, chromosome.list, min.MAF = 0.03, min.gene.module = 6, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = FALSE) {
+find.all.trans.eQTLs <- function( choice.sets, chromosome.list = as.character(22:1), min.MAF = 0.03, min.gene.module = 6, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = FALSE) {
   
   base.folder <- '/cluster/project8/vyp/eQTL_integration'
 
@@ -98,6 +98,7 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list, min.MAF = 0.03, 
   
 ###### Now define the modules below
     loc.table <- my.res.trans[[ chromosome ]]
+    loc.table$ProbeID <- as.character( loc.table$ProbeID )
     my.tab <- table(c('dummy', loc.table$SNP))
     
     while ((nrow(loc.table) > 0) && (max(my.tab) >= min.gene.module)) {
@@ -122,9 +123,7 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list, min.MAF = 0.03, 
 ############ Now the stepwise regression analysis
       if (run.stepwise) {
         message('Running the stepwise analysis')
-        print(head(best.module))
-                                        #browser()
-        my.stepwise <- stepwise.analysis (expression.data = expression[ best.module$ProbeID, ] ,  ### need to add covariates
+        my.stepwise <- stepwise.analysis (expression.data = expression[ as.character(best.module$ProbeID), ] ,  ### need to add covariates
                                           genotype.data = genotypes$genotypes,
                                           snp.name = best.SNP,
                                           gene.names = best.module$Gene.name)
@@ -139,9 +138,8 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list, min.MAF = 0.03, 
           my.res[[  paste('PCA', i, sep = '') ]] <- cor.test( geno.num, my.pca$x[, i])$p.value
         }
       }
-      
 ###########
-      tableChrom <- rbind.data.frame(tableChrom, my.res)
+      table.final <- rbind.data.frame(table.final, my.res)
                                         #print(head(table.final))
     
 ################
@@ -159,6 +157,7 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list, min.MAF = 0.03, 
 
     if (length(chromosome.list) == 1) save(list = c('modules.final', 'tableChrom'), file = chromFile)
     write.table(x = table.chrom, file = tableChrom, row.names = FALSE, quote = FALSE, sep = '\t')
+    
   }
 
 

@@ -38,8 +38,10 @@ stepwise.analysis <- function(expression.data, ##rows are probes, columns are sa
     for (i in 1:n.probes) {
       probe <- my.probes[ i ]
       dframe$probe <- expression.data[ probe, ]
-      mod.base <- lm (data = dframe, formula = base.formula, subset = !is.na(geno)) 
+      
+      mod.base <- lm (data = dframe, formula = base.formula, subset = !is.na(geno))
       mod.new <- lm (data = dframe, formula = paste(base.formula, ' + geno'))
+      
       my.p <-  anova( mod.base, mod.new, test = 'F')[['Pr(>F)']][2]
       my.res$pval[ i ] <- coef(summary(mod.new))['geno',4]
       if (coef(mod.new)['geno'] < 0.00001)  my.res$pval[ i ] <- 1  ##dirty hack
@@ -57,8 +59,8 @@ stepwise.analysis <- function(expression.data, ##rows are probes, columns are sa
         #if (step == 8) browser()
       }
       
-      dframe[, best.probe ] <- expression.data[ best.probe, ]
-      base.formula <- paste(base.formula, ' + ', best.probe, sep = '')
+      dframe[, paste('X', best.probe, sep = '')] <- expression.data[ best.probe, ]
+      base.formula <- paste(base.formula, ' +  X', best.probe, sep = '')
       base.model <- lm (data = dframe, formula = base.formula)
     }
   }

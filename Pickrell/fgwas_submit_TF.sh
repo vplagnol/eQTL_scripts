@@ -1,12 +1,10 @@
-#step1=/cluster/project8/vyp/vincent/Software/pipeline/fgwas/fgwas_step1.sh
-#sh $step1 --listBinAnnot $binPheno --inputFrame data/eQTLs_no_annotations.tab --outputFrame $annotationFile  --TF TRUE --ENCODE FALSE   ##should be part of the initial R scripts, so no need to call that
-
 
 step2=/cluster/project8/vyp/vincent/Software/pipeline/fgwas/fgwas_step2.sh
 step3=/cluster/project8/vyp/vincent/Software/pipeline/fgwas/fgwas_step3.sh
 
 #root=data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS2
-root=data/WB_dexamethasone_DiRienzo/eQTLs/fgwas/fgwas_logFC
+#root=data/WB_dexamethasone_DiRienzo/eQTLs/fgwas/fgwas_logFC
+root=data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS24logFC
 #root=data/brain_UKBEC/eQTLs/fgwas/fgwas_lncRNA_cerebellar_cortex
 #root=data/DC_MTB_Barreiro/eQTLs/fgwas/fgwas_logFC
 #root=data/WB_dexamethasone_DiRienzo/eQTLs/fgwas/fgwas_logFC
@@ -25,8 +23,14 @@ done
 
 
 script=cluster/submission/fgwasTF.sh
+
+
+step1=/cluster/project8/vyp/vincent/Software/pipeline/fgwas/fgwas_step1.sh
+sh $step1 --listBinAnnot $binPheno --inputFrame ${root}_fine_mapping_input.tab --outputFrame $annotationFile  --TF TRUE --ENCODE FALSE   ##should be part of the initial R scripts, so no need to call that
+exit
+
 #sh $step2 --listPhenotypes_bin $binPheno --annotationFile $annotationFile --output $output --script $script
-sh $step3 --listPhenotypes_bin $binPheno --output $output 
+#sh $step3 --listPhenotypes_bin $binPheno --output $output 
 
 
 echo $script

@@ -16,16 +16,18 @@ source('scripts/eQTLs_scripts/find_all_eQTLs.R')
 dataset <- '$dataset'
 condition <- '$condition'
 
-### define the slice we are looking at
-
-for (chromosome in as.character(seq(22, 1))) {
-  my.tab <- run.eQTL ( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 1e-5, force = TRUE)
-}
-
-source('scripts/Pickrell/prepare_for_Pickrell.R')
 choice.sets <- list()
 choice.sets[[ dataset ]] <- condition
-test <- prepare.Pickrell.set(choice.sets)
+
+
+### define the slice we are looking at
+
+#for (chromosome in as.character(seq(22, 1))) {
+#  my.tab <- run.eQTL ( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 1e-5, force = TRUE)
+#}
+
+#source('scripts/Pickrell/prepare_for_Pickrell.R')
+#test <- prepare.Pickrell.set(choice.sets)
 
 source('scripts/transeQTL_scripts/find_all_trans_eQTLs.R')
 
