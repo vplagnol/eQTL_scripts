@@ -131,7 +131,7 @@ prepare.Pickrell.set <- function ( choice.sets, min.MAF = 0.03, level = 'probe',
   
   my.cmd <- paste('R CMD BATCH --no-save --no-restore  --inputFrame=', input.fgwas, ' --outputFrame=',input.fgwas.with.anno,
                   ' --listBinAnnot=', list.bin.annot,
-                  ' --ENCODE=FALSE --TF=TRUE /cluster/project8/vyp/vincent/toolsVarious/fgwas/fgwas_step1.R cluster/R/fgwas_step1.out', sep = '')
+                  ' --ENCODE=FALSE --TF=TRUE /cluster/project8/vyp/vincent/Software/pipeline/fgwas/fgwas_step1.R cluster/R/fgwas_step1.out', sep = '')
   
   submission.file <- paste('cluster/submission/fgwas_', my.sets[1], '.sh', sep = '')
   cat('#!/bin/bash
@@ -143,7 +143,7 @@ prepare.Pickrell.set <- function ( choice.sets, min.MAF = 0.03, level = 'probe',
 #$ -l h_rt=60:0:0
 #$ -V
 #$ -R y
-', my.cmd, '\ngzip -f ',  input.fgwas.with.anno, file = submission.file)
+', my.cmd, file = submission.file)
   
   #system(paste("qsub ", submission.file, sep = ''))
   system(paste("sh ", submission.file, sep = ''))

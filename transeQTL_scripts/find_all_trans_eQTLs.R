@@ -42,9 +42,9 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list = as.character(22
   
 ### do some clean up of old files
   if (length(chromosome.list) == 22) {
-    finalFile <- paste(base.folder, '/data/', dataset, '/modules/modules_', condition, '_all_modules.RData', sep = '')
-    tableFile <-  paste(base.folder, '/data/', dataset, '/modules/modules_', condition, '_main_table.tab', sep = '')
-    for (file in c(finalFile, tableFile)) file.remove(file)
+    finalFile <- paste(oFolder, '/modules_', condition, '_all_modules.RData', sep = '')
+    tableFile <-  paste(oFolder, '/modules_', condition, '_main_table.tab', sep = '')
+    for (file in c(finalFile, tableFile)) {file.remove(file)}
   }
 
   table.final <- data.frame()
@@ -53,8 +53,8 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list = as.character(22
   for (chromosome in chromosome.list) {
     message('Chromosome ', chromosome)
 
-    chromFile <- paste(base.folder, '/data/', dataset, '/modules/modules_', condition, '_chromosome', chromosome, '_all_modules.RData', sep = '')
-    tableChrom <-  paste(base.folder, '/data/', dataset, '/modules/modules_', condition, '_chromosome', chromosome, '_main_table.tab', sep = '')
+    chromFile <- paste(oFolder, '/modules_', condition, '_chromosome', chromosome, '_all_modules.RData', sep = '')
+    tableChrom <-  paste(oFolder, '/modules_', condition, '_chromosome', chromosome, '_main_table.tab', sep = '')
     for (file in c(chromFile, tableChrom)) file.remove(file)
 
 ########
@@ -139,7 +139,7 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list = as.character(22
         }
       }
 ###########
-      table.final <- rbind.data.frame(table.final, my.res)
+      table.chrom <- rbind.data.frame(table.chrom, my.res)
                                         #print(head(table.final))
     
 ################
@@ -157,7 +157,7 @@ find.all.trans.eQTLs <- function( choice.sets, chromosome.list = as.character(22
 
     if (length(chromosome.list) == 1) save(list = c('modules.final', 'tableChrom'), file = chromFile)
     write.table(x = table.chrom, file = tableChrom, row.names = FALSE, quote = FALSE, sep = '\t')
-    
+    table.final <- rbind.data.frame( table.final, table.chrom)
   }
 
 
