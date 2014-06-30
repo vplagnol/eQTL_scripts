@@ -5,10 +5,10 @@ step3=/cluster/project8/vyp/vincent/Software/pipeline/fgwas/fgwas_step3.sh
 #root=data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS2
 #root=data/WB_dexamethasone_DiRienzo/eQTLs/fgwas/fgwas_logFC
 #root=data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS24logFC
-root=data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS2logFC
+#root=data/monocytes_Knight/eQTLs/fgwas/fgwas_LPS2logFC
 #root=data/monocytes_Knight/eQTLs/fgwas/fgwas_IFNlogFC
 #root=data/brain_UKBEC/eQTLs/fgwas/fgwas_lncRNA_cerebellar_cortex
-#root=data/DC_MTB_Barreiro/eQTLs/fgwas/fgwas_logFC
+root=data/DC_MTB_Barreiro/eQTLs/fgwas/fgwas_logFC
 #root=data/WB_dexamethasone_DiRienzo/eQTLs/fgwas/fgwas_logFC
 #root=data/LCL_dexamethasone_DiRienzo/eQTLs/fgwas/fgwas_logFC
 

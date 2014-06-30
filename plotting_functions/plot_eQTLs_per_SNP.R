@@ -13,7 +13,9 @@ source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
 #setwd("/cluster/project8/vyp/eQTL_integration")
 
 
-plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf, root = '/cluster/project8/vyp/eQTL_integration') {
+plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf, root = '/cluster/project8/vyp/eQTL_integration', free.scale = FALSE,
+                       ylim = NULL,
+                       hline = c()) {
 
   all.plots <- list()
   plot.nb <- 0
@@ -47,6 +49,8 @@ plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf
       support <- get(paste('support', condition, sep = '.'))
       expr.data <- get(condition)
 
+      if (class(expr.data) == 'data.frame') expr.data <- as.matrix( expr.data )  ### a bit of a hack, will need fixing
+      
       print(gene.names  %in% support$Gene.name | gene.names %in% support$ensemblID)
       for (loc.gene in gene.names) {
         message('Gene ', loc.gene)
@@ -59,6 +63,7 @@ plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf
           message('Multiple matching probes ', nrow(expr.data.loc))
           print(dimnames(expr.data.loc)[[1]])
         }
+
         expr.data.loc <- expr.data.loc[which.max(apply(expr.data.loc, MAR  = 1, FUN = median)),]  ##take the highest expressing probe for now
         pretty.type=pretty.names(names(choice.sets)[i], condition)
 
@@ -112,7 +117,7 @@ plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf
   len <- length(levels(factor(all.data$type)))
   vars <- data.frame(expand.grid(levels(factor(all.data$type))))
   colnames(vars) <- c('type')
-  dat <- data.frame(x = rep(2, len), y = min(all.data$expr, na.rm = TRUE), type=vars, labs=paste("P-value=", signif(P.value, 3), sep=""))
+
 
   nrows <- 1
   if ( len > 4 ) nrows <- 2
@@ -131,10 +136,33 @@ plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf
       geom_boxplot(fill = "grey80", position=position_dodge(1), alpha=0.5) +
         theme_bw() +
           xlab(snp.name)  + 
-            ylab (paste(ifelse (length(gene.names) == 1, gene.names, 'Gene'), 'expression')) +
-              facet_grid(. ~ type) +
-                facet_wrap (facets = ~ type, nrow = nrows, ncol = ncols) +
-                  geom_text(aes(x, y, label=labs, group=NULL),data=dat)
+            ylab (paste(ifelse (length(gene.names) == 1, gene.names, 'Gene'), 'expression'))
+
+
+  if (free.scale) {
+    #browser()
+    dat <- data.frame(x = rep(2, len), y = as.numeric(tapply( all.data$expr, IND = all.data$type, FUN = min, na.rm = TRUE)), type=vars, labs=paste("P-value=", signif(P.value, 3), sep=""))
+    my.plot <- my.plot + facet_grid(. ~ type, scales = 'free_y') +
+      facet_wrap (facets = ~ type, nrow = nrows, ncol = ncols, scales = 'free_y') +
+        geom_text(aes(x, y, label=labs, group=NULL),data=dat)
+  } else {
+    dat <- data.frame(x = rep(2, len), y = min(all.data$expr, na.rm = TRUE), type=vars, labs=paste("P-value=", signif(P.value, 3), sep=""))
+    if (!is.null(ylim)) dat$y <- min(ylim)
+    
+    my.plot <- my.plot + facet_grid(. ~ type) +
+      facet_wrap (facets = ~ type, nrow = nrows, ncol = ncols) + 
+        geom_text(aes(x, y, label=labs, group=NULL),data=dat)
+
+    if (!is.null(ylim)) my.plot <- my.plot + ylim(ylim)
+  }
+
+  if (length(hline) > 0) {
+    message('Now adding a horizontal line')
+    for( h in hline) {
+      my.plot <- my.plot +  geom_hline(aes(yintercept= 0))
+    }
+  }
+  
   ggsave (filename = output.pdf, plot = my.plot, width = ncols*4, height = 4*nrows, limitsize = FALSE)
   print(output.pdf)
   return (all.data)
