@@ -91,10 +91,10 @@ prepare.Pickrell.set <- function ( choice.sets, min.MAF = 0.03, level = 'probe',
         
         
         output.pdf <- paste(oFolder.1.figs, '/fgwas_', condition, '_', best.row$SNP, '_Probe', best.row$ProbeID, '_', best.row$Gene.name, '.pdf', sep = '')
-        annotated <- plot.eQTL (chromosome = chr, positions = Pickrell.table$POS, pvalues = Pickrell.table$PVAL, output.pdf = output.pdf, gene.list = loc.symbol,
-                                gene.chromosome = best.row$gene.chromosome,
-                                gene.position.start = best.row$gene.position.start, gene.position.end = best.row$gene.position.end,
-                                gene.name = loc.symbol, gene.context = TRUE) ##plot a fancy graph
+        #annotated <- plot.eQTL (chromosome = chr, positions = Pickrell.table$POS, pvalues = Pickrell.table$PVAL, output.pdf = output.pdf, gene.list = loc.symbol,
+        #                        gene.chromosome = best.row$gene.chromosome,
+        #                        gene.position.start = best.row$gene.position.start, gene.position.end = best.row$gene.position.end,
+        #                        gene.name = loc.symbol, gene.context = TRUE) ##plot a fancy graph
         
         output.file <- paste(oFolder.1.files, '/fgwas_', condition, '_', best.row$SNP, '_Probe', best.row$ProbeID, '_', best.row$Gene.name, '.tab', sep = '')
 
