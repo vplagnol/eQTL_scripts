@@ -1,52 +1,41 @@
 
-create.Pickrell.input.file <- function (choice.sets,
+create.Pickrell.input.file <- function (dataset,
+                                        condition,
                                         genotypes, expression,
                                         ProbeID, chromosome, snp.name, min.MAF = 0.03, min.certain.calls = 0.3,
                                         gene.chromosome, gene.position.start, gene.position.end) {
   library(snpStats)
   base.folder <- '/cluster/project8/vyp/eQTL_integration'
   
-  nsets <- length(choice.sets)
-
-  for (i in 1:nsets) {
-    dataset <- names(choice.sets)[ i ]
-
-    for (condition in choice.sets[i]) {
-      ####
-      shared.samples <- intersect(dimnames(expression)[[2]], dimnames(genotypes$genotypes)[[1]])
-      n.samples <- length(shared.samples)
-      expression <- expression[, shared.samples]
-      genotypes$genotypes <- genotypes$genotypes[ shared.samples, ]
-      genotypes$fam <- genotypes$genotypes[ shared.samples, ]
-      message('Nb of samples shared by expression and genotypes: ', n.samples)
-
-
-      ########
-      expression.frame <- data.frame(samples = shared.samples, exp = NA)
-      row.names(expression.frame) <- shared.samples
-      
+####
+  shared.samples <- intersect(dimnames(expression)[[2]], dimnames(genotypes$genotypes)[[1]])
+  n.samples <- length(shared.samples)
+  expression <- expression[, shared.samples]
+  genotypes$genotypes <- genotypes$genotypes[ shared.samples, ]
+  genotypes$fam <- genotypes$genotypes[ shared.samples, ]
+  message('Nb of samples shared by expression and genotypes: ', n.samples)
+  
+  
+########
+  expression.frame <- data.frame(samples = shared.samples, exp = NA)
+  row.names(expression.frame) <- shared.samples
+  
       
 ############# Now add covariates if there is such a file
-      covariates.tab <- paste(base.folder, '/data/', dataset, '/covariates/covariates_', condition, '.tab', sep = '')  ##look for condition specific covariates first
-      if (!file.exists(covariates.tab)) {covariates.tab <- paste(base.folder, '/data/', dataset, '/covariates/covariates.tab', sep = '')} ##otherwise the generic one
-      
-      if (file.exists(covariates.tab)) {
-        covariates <- read.table(covariates.tab, header = TRUE, sep = '\t')
-        row.names(covariates) <- covariates$id
-        covariates <- covariates[ shared.samples, ]
-        covar.labels <- subset ( names(covariates), names(covariates) != 'id')
-        my.formula <- paste('exp ~ ', paste(covar.labels, collapse = ' + '))
-        for (covar.loc in covar.labels) {expression.frame[, covar.loc] <- covariates[, covar.loc]}
-      } else {
-        my.formula <- 'exp ~ 1'
-      }
-
-
-      
-    }
+  covariates.tab <- paste(base.folder, '/data/', dataset, '/covariates/covariates_', condition, '.tab', sep = '')  ##look for condition specific covariates first
+  if (!file.exists(covariates.tab)) {covariates.tab <- paste(base.folder, '/data/', dataset, '/covariates/covariates.tab', sep = '')} ##otherwise the generic one
+  
+  if (file.exists(covariates.tab)) {
+    covariates <- read.table(covariates.tab, header = TRUE, sep = '\t')
+    row.names(covariates) <- covariates$id
+    covariates <- covariates[ shared.samples, ]
+    covar.labels <- subset ( names(covariates), names(covariates) != 'id')
+    my.formula <- paste('exp ~ ', paste(covar.labels, collapse = ' + '))
+    for (covar.loc in covar.labels) {expression.frame[, covar.loc] <- covariates[, covar.loc]}
+  } else {
+    my.formula <- 'exp ~ 1'
   }
-
-
+  
 
   SNP.position <- genotypes$map[ snp.name, ]$position
   good.SNPs <- which ( genotypes$map$position > SNP.position - 500000 & genotypes$map$position < SNP.position + 500000)
