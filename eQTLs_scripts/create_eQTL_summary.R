@@ -72,6 +72,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
                                                   condition = condition,
                                                   genotypes = genotypes,
                                                   expression = expression,
+                                                  base.folder = base.folder,
                                                   min.MAF = min.MAF,
                                                   ProbeID = ProbeID, chromosome = best.row$chromosome, snp.name = best.row$SNP)
     

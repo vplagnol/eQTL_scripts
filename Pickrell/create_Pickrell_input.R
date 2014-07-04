@@ -3,9 +3,10 @@ create.Pickrell.input.file <- function (dataset,
                                         condition,
                                         genotypes, expression,
                                         ProbeID, chromosome, snp.name, min.MAF = 0.03, min.certain.calls = 0.3,
-                                        gene.chromosome, gene.position.start, gene.position.end) {
+                                        gene.chromosome, gene.position.start, gene.position.end,
+                                        base.folder = '/cluster/project8/vyp/eQTL_integration') {
   library(snpStats)
-  base.folder <- '/cluster/project8/vyp/eQTL_integration'
+  
   
 ####
   shared.samples <- intersect(dimnames(expression)[[2]], dimnames(genotypes$genotypes)[[1]])
