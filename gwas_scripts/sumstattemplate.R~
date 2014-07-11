@@ -1,20 +1,16 @@
-#######################################################################################
 #Written by Jonathan Griffiths 10 July 2014
 #Produces summary stats for WHII metabolomics data & genotypes
-#Run with all chromosomes via accompanying bash script sumstatsubmit.sh
-#column format SNPID, CHR, POS, then repeat {BETA.biom, SE.biom, PVAL.biom, N.biom} for all metabolites.
+#Looping for chromosomes provided by accompanying bash script sumstatsubmit.sh
 ################################################################################
 
-#specify project in bash file
-
 source("http://bioconductor.org/biocLite.R")
-biocLite("snpStats", lib='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')##### Is this necessary? Running off cluster, seemed to give problems without this step every time.
+biocLite("snpStats", lib='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')
 library(snpStats, lib.loc='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')
 
-metab=read.csv(paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/phenotype/METABOLOMICSNAME'))
+metab=read.csv('/cluster/project8/vyp/eQTL_integration/data/WHII/rawData/metabolomics_phase5/dsg200k_9_metabolites.csv')
 snpids=read.table('/cluster/project8/vyp/claudia/info_1000G_EUR.txt', header=T, nrows=17076866, colClasses=c('character','character','character','character','numeric'), sep='\t')
 
-#remove duplicates (important for rownames, the metabolite values are the same anyway)
+#remove duplicates (important for rownames)
 dups=duplicated(metab$FID)
 metab=metab[!dups,]
 
@@ -22,12 +18,12 @@ metab=metab[!dups,]
 rownames(metab)=metab$FID
 
 #load genotype data
-filename=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/genotypes/chr', chr)
+filename=paste0('/cluster/project8/vyp/eQTL_integration/data/WHII/rawData/genotypes/chr', chr, '_WHII_imputed.Rdata')
 #load genotype
 load(filename)
 #########################################################
 
-#fix genotype row names to match metab NB this was needed for WHII, not sure whether the genotype naming is alwyas like this.
+#fix genotype row names to match metab
 rownames(genotypes)=strtrim(rownames(genotypes),10)
 
 #prepare initial columns of data frame
@@ -47,8 +43,7 @@ column=4
 #########################################################
 
 #metabolite loop to construct table
-#column format SNPID, CHR, POS, then repeat {BETA.biom, SE.biom, PVAL.biom, N.biom} for all metabolites.
-#indeces in for loop might need changing depending on format of metabolite table.
+
 for(met in 4:236){
 metabolite=colnames(metab)[met]
 
@@ -77,4 +72,4 @@ names(biomarker)[column]=paste('N.',metabolite, sep='')
 column=column+1
 }
 
-save(biomarker, file=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/summaryStats/', oFile))
+save(biomarker, file=paste0('/cluster/project8/vyp/eQTL_integration/data/WHII/summaryStats/', oFile))
