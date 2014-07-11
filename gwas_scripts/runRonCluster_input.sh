@@ -7,5 +7,5 @@
 #$ -R y
 #$ -pe smp 1
 #$ -cwd
-#$ -o /cluster/project8/vyp/eQTL_integration/scripts/summaryStats/cluster/output/
-#$ -e /cluster/project8/vyp/eQTL_integration/scripts/summaryStats/cluster/error/
+#$ -o /cluster/project8/vyp/eQTL_integration/scripts/gwas/summaryStats/cluster/output/
+#$ -e /cluster/project8/vyp/eQTL_integration/scripts/gwas/summaryStats/cluster/error/
