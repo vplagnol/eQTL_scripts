@@ -26,13 +26,24 @@ chrY
 (no RData suffix, for no good reason)
 
 
-The name of the object must be genotypes in each file
+The name of the object must be genotypes in each file. 
+genotypes is a list that contains:
+Mandatory: genotypes$genotypes which is a snpStats object, snps ideally in rsid format
+Mandatory: genotypes$map file, with columns: SNP, allele.1, allele.2, position
+Optional: a ped file, genotypes$fam
 
 ######### phenotypes folder
+Two potential files:
+binary.RData contain a single object named binary.pheno
+continuous.RData contains a single object named continuous.pheno
 
+numeric matrix, columns are measurements and rows are sample IDs that MUST match the genotypes
+Don't forget the row and column names.
 
 ######## covariates folder
-
+basic is a file called
+covariates.tab
+tab delimited, must contain the colum "id" that matches the sample names
 
 
 
