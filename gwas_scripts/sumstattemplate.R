@@ -1,45 +1,36 @@
 #######################################################################################
 #Written by Jonathan Griffiths 10 July 2014
-#Produces summary stats for WHII metabolomics data & genotypes
+#Produces summary stats for continuous metabolomics data & genotypes
 #Run with all chromosomes via accompanying bash script sumstatsubmit.sh
 #column format SNPID, CHR, POS, then repeat {BETA.biom, SE.biom, PVAL.biom, N.biom} for all metabolites.
 ################################################################################
 
 #specify project in bash file
 
+#load packages
+
 source("http://bioconductor.org/biocLite.R")
 biocLite("snpStats", lib='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')##### Is this necessary? Running off cluster, seemed to give problems without this step every time.
 library(snpStats, lib.loc='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')
 
-metab=read.csv(paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/phenotype/METABOLOMICSNAME')) #standardise name
-snpids=read.table('/cluster/project8/vyp/claudia/info_1000G_EUR.txt', header=T, nrows=17076866, colClasses=c('character','character','character','character','numeric'), sep='\t')
-
-#remove duplicates (important for rownames, the metabolite values are the same anyway)
-dups=duplicated(metab$FID)
-metab=metab[!dups,]
-
-#adjust names for snpStats
-rownames(metab)=metab$FID
-
-#load genotype data
-filename=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/genotypes/chr', chr)
-#load genotype
-load(filename)
+#load data
+filemet=paste0('/cluster/project8/vyp/eQTL_integraton/data/', project, '/phenotype/continuous.Rdata')
+load(filemet)
+filegeno=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/genotypes/chr', chr)
+load(filegeno)
 #########################################################
 
 #fix genotype row names to match metab NB this was needed for WHII, not sure whether the genotype naming is alwyas like this.
+if(project=='WHII'){
 rownames(genotypes)=strtrim(rownames(genotypes),10)
+}
 
 #prepare initial columns of data frame
-snp.loc.temp=SNP.support$position.hg19
-assign(paste('snp.locations','.',chr,sep=''),snp.loc.temp)
-snp.chr.temp=rep(chr, length(snp.loc.temp))
-assign(paste('snp.chromosome','.',chr,sep=''),snp.chr.temp)
+snp.loc=map$position
+snp.chr=map$chromosome
+snp.id=map$snp.name
 
-snp.common=snpids$SNP%in%SNP.support$SNP
-snp.id=snpids$rsid[snp.common]
-
-biomarker=data.frame(snp.id,snp.chr.temp,snp.loc.temp)
+biomarker=data.frame(snp.id,snp.chr,snp.loc)
 names(biomarker)=c('SNPID', 'CHR', 'POS')
 
 column=4
@@ -49,11 +40,11 @@ column=4
 #metabolite loop to construct table
 #column format SNPID, CHR, POS, then repeat {BETA.biom, SE.biom, PVAL.biom, N.biom} for all metabolites.
 #standardise metabolite table for for(counter) generalisation
-for(met in 4:236){
-metabolite=colnames(metab)[met]
+for(met in 1:dim(contunuous.pheno)[2]){
+metabolite=colnames(continuous.pheno)[met]
 
-results=snp.rhs.tests(metab[,met]~1, family='gaussian', snp.data=genotypes,data=metab)
-estimates=snp.rhs.estimates(metab[,met]~1, family='gaussian', snp.data=genotypes,data=metab)
+results=snp.rhs.tests(continuous.pheno[,met]~1, family='gaussian', snp.data=genotypes,data=continuous.pheno)
+estimates=snp.rhs.estimates(continuous.pheno[,met]~1, family='gaussian', snp.data=genotypes,data=continuous.pheno)
 
 BETA.biom=sapply(as(estimates, 'list'), FUN = function(estimates) {if (is.null(estimates)) {return (NA);} else {return((estimates)$beta)} } )
 SE.biom=sapply(as(estimates, 'list'), FUN = function(estimates) { if (is.null(estimates)) {return (NA);} else {return(sqrt((estimates)$Var.beta))} } )
