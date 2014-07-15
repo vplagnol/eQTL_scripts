@@ -1,0 +1,1 @@
+snpid=strtrim(rownames(genotypes)

@@ -49,19 +49,19 @@ PVAL.biom=p.value(results)
 N.biom=sample.size(results)
 
 biomarker[,column]=BETA.biom
-names(biomarker)[column]=paste0('BETA.',metabolite)
+names(biomarker)[column]=paste('BETA.',metabolite, sep='')
 column=column+1
 
 biomarker[,column]=SE.biom
-names(biomarker)[column]=paste0('SE.',metabolite)
+names(biomarker)[column]=paste('SE.',metabolite, sep='')
 column=column+1
 
 biomarker[,column]=PVAL.biom
-names(biomarker)[column]=paste0('PVAL.',metabolite)
+names(biomarker)[column]=paste('PVAL.',metabolite, sep='')
 column=column+1
 
 biomarker[,column]=N.biom
-names(biomarker)[column]=paste0('N.',metabolite)
+names(biomarker)[column]=paste('N.',metabolite, sep='')
 column=column+1
 }
 
