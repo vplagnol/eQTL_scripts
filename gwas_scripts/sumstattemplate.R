@@ -14,7 +14,7 @@ biocLite("snpStats", lib='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/s
 library(snpStats, lib.loc='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')
 
 #load data
-filemet=paste0('/cluster/project8/vyp/eQTL_integraton/data/', project, '/phenotypes/continuous.Rdata')
+filemet=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/phenotypes/continuous.Rdata')
 load(filemet)
 filegeno=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/genotypes/chr', chr)
 load(filegeno)
@@ -37,7 +37,7 @@ column=4
 #metabolite loop to construct table
 #column format SNPID, CHR, POS, then repeat {BETA.biom, SE.biom, PVAL.biom, N.biom} for all metabolites.
 #standardise metabolite table for for(counter) generalisation
-for(met in 1:dim(contunuous.pheno)[2]){
+for(met in 1:dim(continuous.pheno)[2]){
 metabolite=colnames(continuous.pheno)[met]
 
 results=snp.rhs.tests(continuous.pheno[,met]~1, family='gaussian', snp.data=geno,data=continuous.pheno)
