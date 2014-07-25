@@ -14,7 +14,7 @@ biocLite("snpStats", lib='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/s
 library(snpStats, lib.loc='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')
 
 #load data
-filemet=paste0('/cluster/project8/vyp/eQTL_integraton/data/', project, '/phenotype/continuous.Rdata')
+filemet=paste0('/cluster/project8/vyp/eQTL_integraton/data/', project, '/phenotypes/continuous.Rdata')
 load(filemet)
 filegeno=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/genotypes/chr', chr)
 load(filegeno)
