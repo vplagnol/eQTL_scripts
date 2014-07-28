@@ -1,5 +1,5 @@
 ######## important to set this before submission, maybe link here via a bash script from project folder which skips the project part.
-project="WHII"
+project="MRC1946"
 ########
 shopt -s expand_aliases
 source ~/.bashrc
@@ -23,8 +23,8 @@ y=${f%R}
 scriptname=$y
 echo '
 #$ -S /bin/sh
-#$ -l h_vmem=8G
-#$ -l tmem=8G
+#$ -l h_vmem=20G
+#$ -l tmem=20G
 #$ -l h_rt=24:00:0
 #$ -V
 #$ -R y
