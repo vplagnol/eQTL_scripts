@@ -14,7 +14,7 @@ do
 Rscriptname="script_"$chr"_sumstat.R"
 scriptname="script_"$chr"_sumstat.sh"
 cp /cluster/project8/vyp/eQTL_integration/scripts/gwas/summaryStats/scripts/sumstattemplate.R $Rscriptname
-rOutputFileName="biom_chr"$chr".Rdata"
+rOutputFileName="biom_chr"$chr".RData"
 rInput='oFile <- '"'$rOutputFileName'"';chr <- "'$chr'"; project='"'$project'"''
 echo $rInput | cat - $Rscriptname > temp && mv temp $Rscriptname
 
