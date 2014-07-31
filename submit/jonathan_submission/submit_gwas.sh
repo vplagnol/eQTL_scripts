@@ -1,5 +1,8 @@
 ######## important to set this before submission, maybe link here via a bash script from project folder which skips the project part.
 project="MRC1946"
+repoFolder=/cluster/project8/vyp/eQTL_integration ##not that
+
+
 ########
 shopt -s expand_aliases
 source ~/.bashrc
