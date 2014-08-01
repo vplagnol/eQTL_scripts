@@ -10,8 +10,8 @@
 #load packages
 
 source("http://bioconductor.org/biocLite.R")
-biocLite("snpStats", lib='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')##### Is this necessary? Running off cluster, seemed to give problems without this step every time.
-library(snpStats, lib.loc='/home/zcqsjgr/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs')
+biocLite("snpStats", lib=paste0('/home/', user, '/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs'))##### Is this necessary? Running off cluster, seemed to give problems without this step every time.
+library(snpStats, lib.loc=paste0('/home/', user, '/R/x86_64-unknown-linux-gnu-library/3.0/snpStats/libs'))
 
 #load data
 filemet=paste0('/cluster/project8/vyp/eQTL_integration/data/', project, '/phenotypes/continuous.RData')
