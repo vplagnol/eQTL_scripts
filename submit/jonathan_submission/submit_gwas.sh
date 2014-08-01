@@ -1,26 +1,24 @@
-######## important to set this before submission, maybe link here via a bash script from project folder which skips the project part.
+######## important to set this before submission
 project="MRC1946"
-repoFolder=/cluster/project8/vyp/eQTL_integration ##not that
-
-
+repoFolder=/cluster/project8/vyp/jonathan/git/eQTL_integration/
+outputfolder=/cluster/project8/vyp/jonathan/cluster/
 ########
 shopt -s expand_aliases
 source ~/.bashrc
 export PATH=${PATH}:/share/apps/R-3.0.2/bin
 alias R=/share/apps/R-3.0.2/bin/R
-output_directory="/cluster/project8/vyp/cluster/submission/summaryStats"$project
-rm -r $output_directory
-mkdir $output_directory
-cd $output_directory
+script_output_directory=$outputfolder'submission/summaryStats'$project
+rm -r $script_output_directory
+mkdir $script_output_directory
+cd $script_output_directory
 for chr in {1..22}
 do
 Rscriptname="script_"$chr"_sumstat.R"
 scriptname="script_"$chr"_sumstat.sh"
-cp /cluster/project8/vyp/eQTL_integration/scripts/gwas/summaryStats/scripts/sumstattemplate.R $Rscriptname
+cp $repofolder/gwas_scripts/sumstattemplate.R $Rscriptname
 rOutputFileName="biom_chr"$chr".RData"
 rInput='oFile <- '"'$rOutputFileName'"';chr <- "'$chr'"; project='"'$project'"''
 echo $rInput | cat - $Rscriptname > temp && mv temp $Rscriptname
-
 f=$scriptname
 y=${f%R}
 scriptname=$y
@@ -33,8 +31,8 @@ echo '
 #$ -R y
 #$ -pe smp 1
 #$ -cwd
-#$ -o /cluster/project8/vyp/eQTL_integration/cluster/output/summaryStats
-#$ -e /cluster/project8/vyp/eQTL_integration/cluster/error/summaryStats' > $scriptname
+#$ -o '$output_folder'output/summaryStats'$project'
+#$ -e '$output_folder'error/summaryStats'$project > $scriptname
 echo R CMD BATCH --no-save $f >> $scriptname
 echo "Running" $f "on cluster as" $scriptname
 qsub $scriptname
