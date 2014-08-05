@@ -1,3 +1,4 @@
+# Written by Claudia Giambartolomei on 06/10/2014 
 # For the eqtl file, this is the +/- region around which we construct the region around the top snp 
 ##########################
 
@@ -21,11 +22,11 @@ suppressPackageStartupMessages({
   require(coloc);
 });
 
-# For plotting with locuszoom
-refFlat_path = "/cluster/project8/vyp/vincent/toolsVarious/locuszoom/refFlat.RData"
-source('/cluster/project8/vyp/vincent/toolsVarious/locuszoom/call_locuszoom3_temp.R')
-load(refFlat_path)
-refFlatRaw <- refFlatRaw.VP
+# For plotting with locuszoom # Already specified in main script
+#refFlat_path = "/cluster/project8/vyp/vincent/toolsVarious/locuszoom/refFlat.RData"
+#source('/cluster/project8/vyp/vincent/toolsVarious/locuszoom/call_locuszoom3_temp.R')
+#load(refFlat_path)
+#refFlatRaw <- refFlatRaw.VP
 
 if (plot) {
    plot.fld = paste(outfolder, "plot/", sep="")
@@ -73,7 +74,7 @@ if (plot) {
       gene <- eqtl.data[i,"Gene.name"]
       probeID <- eqtl.data[i,"ProbeID"]
 
-      message(gene, ": ", length(matches), " snps in biomarkers. From: ", pos.start, " To: ", pos.end)
+      message(i, " ",  gene, ": ", length(matches), " snps in biomarkers. From: ", pos.start, " To: ", pos.end)
 
       for (j in 1:length(biom.names)) {
          colname.pval <-  paste("PVAL.", biom.names[j], sep = "")
@@ -134,6 +135,8 @@ if (plot) {
 	        pvalue_BF_df$pos = merged.data[match(pvalue_BF_df$results.snp, merged.data$SNPID), "POS"]
 	        pvalue_BF_df$locus_snp <- paste(pvalue_BF_df$chr, pvalue_BF_df$pos, sep=":")
 	        pvalue_BF_df$locus_snp <- paste("chr", pvalue_BF_df$locus_snp, sep="")
+                # INDELS FORMAT FOR LOCUSZOOM: chr1:117930794:AAG_A (not rsid)
+                pvalue_BF_df$locus_snp <- ifelse(grepl("*[:][:]*", pvalue_BF_df$results.snp), paste("chr", as.character(pvalue_BF_df$results.snp), sep=""), as.character(pvalue_BF_df$locus_snp)) 
                 pvalue_BF_df$results.pvalues.df1 = merged.data[match(pvalue_BF_df$results.snp, merged.data$SNPID), colname.pval]
                 pvalue_BF_df$results.pvalues.df2 = merged.data[match(pvalue_BF_df$results.snp, merged.data$SNPID), "PVAL"]
                 image.biom = paste(plot.fld, "/", region_name, '_df1.pdf', sep='')
@@ -145,7 +148,8 @@ if (plot) {
                 message('Output pdf for biomarker: ', image.biom)
                 pdf(image.biom, width = 9, height = 9)
                 #output of region_ld.ld is in /SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs/ ?
-                locuszoom.ugi(metal = pvalue_BF_file,
+                # If INDEL ALLELES do not match exactly (for ex. are reversed from the reference EUR files in here /cluster/project8/vyp/vincent/toolsVarious/locuszoom/EUR/), skip for now:
+                plotted = tryCatch(locuszoom.ugi(metal = pvalue_BF_file,
                   refSnp = pvalue_BF_df[pvalue_BF_df$results.snp==best.causal,"locus_snp"] , #rs10877835
                   title = 'A',
                   pvalCol='results.pvalues.df1',
@@ -160,14 +164,16 @@ if (plot) {
                   temp.file.code = region_name,
                   start= pos.start ,
                   end = pos.end
-                  )
+                  ), error=function(e) NULL )
                 dev.off()
+                # If the plot is empty unlink:
+                if (is.null(plotted)) unlink(image.biom)
 
         	#do.call(file.remove,list(list.files(wd, pattern="region_ld")))
 	        #file.remove(paste(wd, region_name, "_df1", ".log", sep=""))
                 message('Output pdf for eQTL: ', image.eqtl)
                 pdf(image.eqtl, width = 9, height = 9)
-                locuszoom.ugi(metal = pvalue_BF_file,
+                plotted = tryCatch(locuszoom.ugi(metal = pvalue_BF_file,
                   refSnp = pvalue_BF_df[pvalue_BF_df$results.snp==best.causal,"locus_snp"] , #rs10877835
                   title = 'B',
                   pvalCol='results.pvalues.df2',
@@ -182,9 +188,10 @@ if (plot) {
                   temp.file.code = region_name,
                   start= pos.start ,
                   end = pos.end
-                  )
-
+                  ), error=function(e) NULL )
                 dev.off()
+                # If the plot is empty unlink:
+                if (is.null(plotted)) unlink(image.biom)
 
 	        #do.call(file.remove,list(list.files(wd, pattern="region_ld")))
 	        #file.remove(paste(wd, region_name, "_df2", ".log", sep=""))
