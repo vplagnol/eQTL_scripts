@@ -28,7 +28,9 @@ p12 <- 1e-6
 
 ##############################################
 # Submission of /cluster/project8/vyp/eQTL_integration/scripts/coloc/eQTL_biom_coloc.R
-source("/cluster/project8/vyp/eQTL_integration/scripts/coloc/eQTL_biom_coloc.R")
+#source("/cluster/project8/vyp/eQTL_integration/scripts/coloc/eQTL_biom_coloc.R")
+#Use this before git commit:
+source("/cluster/project8/vyp/claudia/scripts/eQTL_scripts/coloc/eQTL_biom_coloc.R")
 
 biom.rdata.fname <- paste(data.folder, biom.dataset, '/summaryStats/biom_chr', chr.name, '.RData', sep='')
 eqtl.fname <- paste(data.folder, eqtl.dataset, '/eQTLs/fgwas/fgwas_', condition, '_summary_eQTLs.csv', sep='')
@@ -54,7 +56,8 @@ if ( !file.exists(outfolder) ) dir.create(file.path(outfolder), showWarnings = F
 ########################## Why can't I put these inside the function?
 # For plotting with locuszoom
 refFlat_path = "/cluster/project8/vyp/vincent/toolsVarious/locuszoom/refFlat.RData"
-source('/cluster/project8/vyp/vincent/toolsVarious/locuszoom/call_locuszoom3_temp.R')
+#source('/cluster/project8/vyp/vincent/toolsVarious/locuszoom/call_locuszoom3_temp.R')
+source("/cluster/project8/vyp/claudia/scripts/eQTL_scripts/submit/claudia_submission/call_locuszoom3_temp.R")
 load(refFlat_path)
 refFlatRaw <- refFlatRaw.VP
 

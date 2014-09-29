@@ -51,7 +51,18 @@ if (plot) {
    eqtl.data = subset(eqtl.data, eqtl.data$MAF > 0.01)
 
    message("There are ", nrow(eqtl.data), " regions in chr ", chr.name)
-
+  
+   # If Gene.name is missing, use ensemblID instead, then try to retrieve name from biomaRt. 
+   if (nrow(eqtl.data[eqtl.data$Gene.name=="",]) > 0) {
+     eqtl.data$Gene.name = ifelse(eqtl.data$Gene.name=="", eqtl.data$ensemblID, eqtl.data$Gene.name)
+     if (length(eqtl.data$Gene.name[grep("ENSG", eqtl.data$Gene.name)]) >0 ) {
+      library(biomaRt)
+      mart <- useMart(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+      res.gn <- getBM(attributes = c("ensembl_gene_id", "hgnc_symbol"), filters = "ensembl_gene_id", values = eqtl.data$Gene.name[grep("ENSG", eqtl.data$Gene.name)], mart = mart)
+      res.gn = res.gn[res.gn$hgnc_symbol!="",]
+      eqtl.data$Gene.name[which(eqtl.data$Gene.name %in% res.gn$ensembl_gene_id)]= res.gn[match(eqtl.data$Gene.name[which(eqtl.data$Gene.name %in% res.gn$ensembl_gene_id)], res.gn$ensembl_gene_id), "hgnc_symbol"]
+     }
+   }
    # Assume that the number of samples is the same for every line in each dataset 
    N.eqtl <- eqtl.data$N[1]
 
