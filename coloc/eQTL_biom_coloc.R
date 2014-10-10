@@ -41,17 +41,9 @@ if (plot) {
 
    # Subset by chromosome 
    eqtl.data <- subset(eqtl.data, CHR == chr.name)
-   # Filter by imputation quality if column exists
-   info.columns <- grep( names(eqtl.data), pattern = '^info\\.', value = TRUE)
-   if (length(info.columns) > 0)	{
-       eqtl.data = subset(eqtl.data, eqtl.data[,info.columns] > 0.4)
-   }
-   # Filter by MAF? 
-   eqtl.data$MAF  <- ifelse(eqtl.data$F <= 0.5, eqtl.data$F , 1-eqtl.data$F )
-   eqtl.data = subset(eqtl.data, eqtl.data$MAF > 0.01)
 
    message("There are ", nrow(eqtl.data), " regions in chr ", chr.name)
-  
+   #** This should be moved after the matching with biom data! **#  
    # If Gene.name is missing, use ensemblID instead, then try to retrieve name from biomaRt. 
    if (nrow(eqtl.data[eqtl.data$Gene.name=="",]) > 0) {
      eqtl.data$Gene.name = ifelse(eqtl.data$Gene.name=="", eqtl.data$ensemblID, eqtl.data$Gene.name)
@@ -77,6 +69,17 @@ if (plot) {
       region.eqtl <- read.csv(as.character(eqtl.data[i, "output.file"]) ,
                          sep='\t', stringsAsFactors = FALSE)
       region.biom <- biom.data[matches, ]
+      
+      # Filter by MAF? 
+      region.eqtl$MAF  <- ifelse(region.eqtl$F <= 0.5, region.eqtl$F , 1-region.eqtl$F )
+      region.eqtl = subset(region.eqtl, region.eqtl$MAF > 0.01)
+
+      # Filter by imputation quality if column exists
+      info.columns <- grep( names(region.eqtl), pattern = '^info\\.', value = TRUE)
+      if (length(info.columns) > 0)        {
+         region.eqtl = subset(region.eqtl, region.eqtl[,info.columns] > 0.4)
+      }
+
       # Construct the MAF data.frame, since we only want the shared snps, just do it for one dataset  
       maf.eqtl   <- data.frame(snp = region.eqtl$SNPID, maf = region.eqtl$F)
 
@@ -86,6 +89,7 @@ if (plot) {
       probeID <- eqtl.data[i,"ProbeID"]
 
       message(i, " ",  gene, ": ", length(matches), " snps in biomarkers. From: ", pos.start, " To: ", pos.end)
+
 
       for (j in 1:length(biom.names)) {
          colname.pval <-  paste("PVAL.", biom.names[j], sep = "")
@@ -135,7 +139,8 @@ if (plot) {
          
 
          ############# PLOT
-         if (plot & pp4 > 0.5 & nsnps > 2) {
+         if (plot & (pp4 > 0.5 | pp3 >=0.5) & nsnps > 2) {
+         #if (plot & pp4 > 0.5 & nsnps > 2) {
 
                 pvalue_BF_df = as.data.frame(coloc.res[2])            
                 region_name <- paste(gene, '.', probeID,'.', biom.names[j], sep= '')

@@ -1,5 +1,4 @@
 ###################################################
-## This script is called from a submit bash script 
 args <- commandArgs(trailingOnly=TRUE)
 biom.dataset=args[1]
 eqtl.dataset=args[2]
@@ -9,11 +8,11 @@ chr.name=args[5]
 type=args[6]
 
 
-# If UCLEB, leave biom.names as NA and load later
-if (biom.names=="ucleb") {
-  biom.names.file <- "/cluster/project8/vyp/eQTL_integration/scripts/coloc/biom.names.RData"
-  load(biom.names.file)
+# If biom.names is a RData file, load
+if (length(grep(".RData", biom.names))>0) {
+  load(biom.names)
 }
+
 
 ##############################################
 ## Variables to set 

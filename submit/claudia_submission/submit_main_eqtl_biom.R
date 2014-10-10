@@ -1,14 +1,13 @@
 ##############################################
 ## Variables to set 
 ##############################################
-biom.dataset <- 'UCLEB' # 'SCZ_Ripke'
+biom.dataset <- 'lipids_Teslovich' # 'UCLEB' # 'SCZ_Ripke'
 eqtl.dataset <- 'liver_Schadt'  # 'brain_UKBEC' # 'GTex'
-biom.names="ucleb"
-# If UCLEB, leave biom.names as "ucleb" and load later
-## condition <- 'AdiposeSubcutaneous'
-#cond.all = c("HeartLeftVentricle","AdiposeSubcutaneous","Thyroid","SkinSunExposedLowerleg","Nerve","Muscle","ArteryTibial","WholeBlood")
-cond.all="Liver"
-type="quant"
+
+# If UCLEB or Teslovich, specify path to biom.names files and load later
+if (biom.dataset=="UCLEB") (biom.names="/cluster/project8/vyp/eQTL_integration/data/UCLEB/summaryStats/biom.names.RData")
+if (biom.dataset=="lipids_Teslovich") (biom.names="/cluster/project8/vyp/eQTL_integration/data/lipids_Teslovich/summaryStats/biom.names.RData")
+#"/cluster/project8/vyp/eQTL_integration/scripts/coloc/biom.names.RData"
 
 ########### SCZ and UKBEC
 ## biom.dataset <- 'SCZ_Ripke'
@@ -16,6 +15,13 @@ type="quant"
 ## biom.names="scz"
 ## cond.all = c("CRBL","FCTX","HIPP","MEDU","OCTX","PUTM","SNIG","TCTX","THAL","WHMT")
 ## type = "cc"
+
+###########
+## condition <- 'AdiposeSubcutaneous'
+cond.all = c("HeartLeftVentricle","AdiposeSubcutaneous","Thyroid","SkinSunExposedLowerleg","Nerve","Muscle","ArteryTibial","WholeBlood")
+if (eqtl.dataset=='liver_Schadt') (cond.all="Liver")
+
+type="quant"
 
 #################
 ## Paths for submission of scripts:
