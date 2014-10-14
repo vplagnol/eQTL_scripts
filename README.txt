@@ -14,6 +14,9 @@ Each of these RData file must contain 2 objects:
 [condition] and support.[condition]
 Condition is a matrix of numbers, with row.names that match the ProbeID column of the support file and colnames that match the different individuals in the dataset.
 
+To be checked: The support.[condition] must include the column ensemblID to know what gene one is referring to, as well as the Gene.name column which is human readable version of the ensembl ID. Now the code has been used for exons and such, in which case I think the Gene.name is used instead of ensemblID.
+TODO: go through scripts to understand exactly what is happening.
+
 
 ######### genotypes folder
 One file per chromosome, stored in snpStats format, called

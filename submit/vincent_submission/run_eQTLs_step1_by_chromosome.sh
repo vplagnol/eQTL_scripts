@@ -29,22 +29,33 @@ source('scripts/eQTLs_scripts/create_eQTL_summary.R')
 dataset <- '$dataset'
 condition <- '$condition'
 
+step1 <- FALSE
+step2 <- TRUE
+step3 <- FALSE
+
 ###### cis eQTLs first
-#my.tab <- run.eQTL (dataset, 
+
+if (step1) {
+my.tab <- run.eQTL (dataset, 
                      condition, 
                      chromosome = as.character($chromosome), 
                      start = 1, end = 300*10^6, 
                      pvOutputThreshold = $pvOutputThreshold, 
                      force = TRUE, min.MAF = 0.05)
+}
 
+if (step2) {
 my.sum <- create.eQTL.summary (dataset, condition, min.MAF = 0.03, level = 'probe', pval.threshold = $pvOutputThreshold,
                                   base.folder = '/cluster/project8/vyp/eQTL_integration',
                                   chromosome = as.character($chromosome), plot = FALSE)
-
+}
 
 
 #### and now the trans eQTL modules
-#res <- find.all.trans.eQTLs ( choice.sets, min.MAF = 0.05, chromosome = as.character($chromosome), min.gene.module = 6, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
+if (step3) {
+  res <- find.all.trans.eQTLs ( choice.sets, min.MAF = 0.05, chromosome = as.character($chromosome), min.gene.module = 6, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
+}
+
 
 " > $Rscript
 	
