@@ -10,35 +10,59 @@ Rbin=/share/apps/R-3.0.2/bin/R
 pvOutputThreshold=5
 
 dataset="brain_UKBEC"
-conditions="probesetCRBL"
+#conditions="probesetCRBL"
+#conditions="probesetFCTX"
+conditions="probesetHIPP probesetMEDU probesetOCTX probesetPUTM probesetSNIG probesetTCTX probesetTHAL probesetWHMT"
 pvOutputThreshold=6
 
+
+
+step1=FALSE
+step2=TRUE
+step3=FALSE
+memory=1.9
+
+if [[ "$step1" == "TRUE" ]]; then
+    memory=23
+fi
+
+
 for condition in $conditions; do
-    for chromosome in `seq 1 22`; do
-	
-	script=cluster/submission/${dataset}_${condition}_${chromosome}_eQTLs.sh
-	Rscript=cluster/submission/${dataset}_${condition}_${chromosome}_eQTLs.R
-	
-	echo "
+    
+    script=cluster/submission/${dataset}_${condition}_eQTLs.sh
+    Rscript=cluster/submission/${dataset}_${condition}_eQTLs.R
+    
+    echo "
 source('scripts/eQTLs_scripts/find_all_eQTLs.R')
 source('scripts/transeQTL_scripts/find_all_trans_eQTLs.R')
 source('scripts/eQTLs_scripts/create_eQTL_summary.R')
 
 
+getArgs <- function() {
+  myargs.list <- strsplit(grep(\"=\",gsub(\"--\",\"\",commandArgs()),value=TRUE),\"=\")
+  myargs <- lapply(myargs.list,function(x) x[2] )
+  names(myargs) <- lapply(myargs.list,function(x) x[1])
+  return (myargs)
+}
+
 ### define the dataset(s) of interest
 dataset <- '$dataset'
 condition <- '$condition'
 
-step1 <- FALSE
-step2 <- TRUE
-step3 <- FALSE
+
+myArgs <- getArgs()
+chromosome <- myArgs[[ 'chromosome' ]]
+
+step1 <- $step1
+step2 <- $step2
+step3 <- $step3
 
 ###### cis eQTLs first
 
 if (step1) {
 my.tab <- run.eQTL (dataset, 
                      condition, 
-                     chromosome = as.character($chromosome), 
+                     chromosome = as.character(chromosome), 
                      start = 1, end = 300*10^6, 
                      pvOutputThreshold = $pvOutputThreshold, 
                      force = TRUE, min.MAF = 0.05)
@@ -47,33 +71,41 @@ my.tab <- run.eQTL (dataset,
 if (step2) {
 my.sum <- create.eQTL.summary (dataset, condition, min.MAF = 0.03, level = 'probe', pval.threshold = $pvOutputThreshold,
                                   base.folder = '/cluster/project8/vyp/eQTL_integration',
-                                  chromosome = as.character($chromosome), plot = FALSE)
+                                  chromosome = as.character(chromosome), plot = FALSE)
 }
 
 
 #### and now the trans eQTL modules
 if (step3) {
-  res <- find.all.trans.eQTLs ( choice.sets, min.MAF = 0.05, chromosome = as.character($chromosome), min.gene.module = 6, pval.threshold = 5, with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
+  res <- find.all.trans.eQTLs (choice.sets, min.MAF = 0.05, 
+                               chromosome = as.character(chromosome), min.gene.module = 6, 
+                               pval.threshold = $pvOutputThreshold, 
+                               with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
 }
 
 
 " > $Rscript
-	
-	echo "
+    
+    echo "
 #!/bin/bash
 #$ -S /bin/bash
 #$ -o cluster/out
 #$ -e cluster/error
 #$ -cwd
-#$ -l tmem=23G,h_vmem=23G
+#$ -l tmem=${memory}G,h_vmem=${memory}G
 #$ -V
 #$ -R y
-#$ -l h_rt=60:00:00
+#$ -l h_rt=60:00:0
+#$ -pe smp 1
+#$ -t 1-22
+#$ -tc 22
 
-$Rbin CMD BATCH --no-save --no-restore  $Rscript cluster/R/${dataset}_${condition}_${chromosome}_eQTLs.out
+chromosome=\${SGE_TASK_ID}
+
+$Rbin CMD BATCH --no-save --no-restore --chromosome=\${chromosome}  $Rscript cluster/R/${dataset}_${condition}_\${chromosome}_eQTLs.out
+
 " > $script
-	
-	ls -ltrh $script
-	qsub $script
-    done
+    
+    ls -ltrh $script
+    qsub $script
 done
