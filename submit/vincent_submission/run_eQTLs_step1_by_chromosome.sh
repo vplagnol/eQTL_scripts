@@ -34,7 +34,7 @@ if [[ "$step2" == "TRUE" ]]; then memory=3.9; fi
 if [[ "$step1" == "TRUE" ]]; then memory=23; fi
 
 
-memory=10.9
+memory=8.9
 
 
 for condition in $conditions; do
@@ -107,7 +107,7 @@ if (step3) {
 #$ -R y
 #$ -l h_rt=60:00:0
 #$ -pe smp 1
-#$ -t 1-1
+#$ -t 1-22
 #$ -tc 22
 
 chromosome=\${SGE_TASK_ID}
