@@ -10,15 +10,13 @@ pvOutputThreshold=5
 #conditions="normal IFN LPS2 LPS24 LPS2logFC LPS24logFC IFNlogFC"
 #pvOutputThreshold=5
 
-
 #dataset="WB_Franke"
 #conditions="WB"
 #pvOutputThreshold=5
 
 #dataset="brain_UKBEC"
 #conditions="probesetCRBL"
-#conditions="probesetFCTX"
-#conditions="probesetFCTX probesetHIPP probesetMEDU probesetOCTX probesetPUTM probesetSNIG probesetTCTX probesetTHAL probesetWHMT"
+#conditions="probesetCRBL probesetFCTX probesetHIPP probesetMEDU probesetOCTX probesetPUTM probesetSNIG probesetTCTX probesetTHAL probesetWHMT"
 #pvOutputThreshold=6
 
 
