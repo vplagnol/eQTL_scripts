@@ -13,6 +13,8 @@ GTex.brain <- list (GTex = c('Brain'))
 GTex.muscle <- list (GTex = c('Muscle'))
 
 
+liver.Schadt <- list( liver_Schadt = c('Liver'))
+
 #LCL.logFC.3 <- list( LCL_dexamethasone_DiRienzo = c('untreated', 'treated', 'logFC'))
 #plot.eQTL (choice.sets = LCL.logFC.3, snp.name = 'rs12280343', chromosome = '11', gene.names = 'BIRC3', output.pdf = 'BIRC3.pdf', free.scale = TRUE); stop()
 
@@ -27,8 +29,11 @@ GTex.muscle <- list (GTex = c('Muscle'))
 #test <- plot.eQTL ( choice.sets = monocytes.LPS24logFC, snp.name = 'rs2275888', gene.names = c('IRF7', 'CCL8', 'EPSTI1', 'IRF9'), output.pdf = 'IFNB_trans_monocytes.pdf', chromosome = '9', ylim = c(-2, 4), hline = 0); stop()
 #test <- plot.eQTL ( choice.sets = DC.logFC, snp.name = 'rs2275888', gene.names = c('IRF7', 'CCL8', 'EPSTI1', 'IRF9'), output.pdf = 'IFNB_trans_Barreiro.pdf', chromosome = '9', ylim = c(-2, 4), hline = 0); stop()
 
-test <- plot.eQTL ( choice.sets = monocytes.LPS, snp.name = 'rs2275888', gene.names = 'IFNB1', output.pdf = 'LPS_IFNB1.pdf', chromosome = '9'); stop()
+#test <- plot.eQTL ( choice.sets = monocytes.LPS, snp.name = 'rs2275888', gene.names = 'IFNB1', output.pdf = 'LPS_IFNB1.pdf', chromosome = '9'); stop()
 
+#test <- plot.eQTL ( choice.sets = liver.Schadt, snp.name = 'rs2140734', gene.names = c('FAN1', 'MTMR10'), output.pdf = 'rs2140734_liver.pdf', chromosome = '15'); stop()
+#test <- plot.eQTL ( choice.sets = liver.Schadt, snp.name = 'rs2140734', gene.names = c('10025914382', '10025934391'), output.pdf = 'rs2140734_FAN1_liver_probes.pdf', chromosome = '15'); stop()
+test <- plot.eQTL ( choice.sets = liver.Schadt, snp.name = 'rs2140734', gene.names = c('10023828141', '10025905580', '10025910954', '10025927563'), output.pdf = 'rs2140734_MTMR10_liver_probes.pdf', chromosome = '15'); stop()
 
 
 

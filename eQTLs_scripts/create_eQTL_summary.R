@@ -80,7 +80,8 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
     Pickrell.table$ensemblID <- best.row$ensemblID
     
     min.p <- min(Pickrell.table$PVAL, na.rm = TRUE)
-    if (min.p < 10^-(pval.threshold -1)) {
+    #if (min.p < 10^-(pval.threshold -1)) {
+    if (min.p < 10^(-2)) {
       final <- rbind.data.frame(final, Pickrell.table)
       
       my.list <- as.list(Pickrell.table [ which.min(Pickrell.table$PVAL),])

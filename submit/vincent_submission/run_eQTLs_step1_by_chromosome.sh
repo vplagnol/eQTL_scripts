@@ -2,18 +2,24 @@
 
 Rbin=/share/apps/R-3.0.2/bin/R
 
-#dataset="liver_Schadt"
-#conditions="Liver"
+dataset="liver_Schadt"
+conditions="Liver"
+pvOutputThreshold=5
+
+#dataset=monocytes_Knight
+#conditions="normal IFN LPS2 LPS24 LPS2logFC LPS24logFC IFNlogFC"
+#pvOutputThreshold=5
+
 
 #dataset="WB_Franke"
 #conditions="WB"
-pvOutputThreshold=5
+#pvOutputThreshold=5
 
-dataset="brain_UKBEC"
+#dataset="brain_UKBEC"
 #conditions="probesetCRBL"
 #conditions="probesetFCTX"
-conditions="probesetHIPP probesetMEDU probesetOCTX probesetPUTM probesetSNIG probesetTCTX probesetTHAL probesetWHMT"
-pvOutputThreshold=6
+#conditions="probesetFCTX probesetHIPP probesetMEDU probesetOCTX probesetPUTM probesetSNIG probesetTCTX probesetTHAL probesetWHMT"
+#pvOutputThreshold=6
 
 
 
@@ -22,9 +28,13 @@ step2=TRUE
 step3=FALSE
 memory=1.9
 
-if [[ "$step1" == "TRUE" ]]; then
-    memory=23
-fi
+
+
+if [[ "$step2" == "TRUE" ]]; then memory=3.9; fi
+if [[ "$step1" == "TRUE" ]]; then memory=23; fi
+
+
+memory=10.9
 
 
 for condition in $conditions; do
@@ -97,7 +107,7 @@ if (step3) {
 #$ -R y
 #$ -l h_rt=60:00:0
 #$ -pe smp 1
-#$ -t 1-22
+#$ -t 1-1
 #$ -tc 22
 
 chromosome=\${SGE_TASK_ID}
