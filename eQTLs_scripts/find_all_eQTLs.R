@@ -179,7 +179,7 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
 
 
 
-
+################## The function below essentially reproduces the run.eQTL one, but on a specified expression matrix
 run.eQTL.selected <- function (genotypes, expression.matrix, expression.support = NULL, covariates = NULL, pvOutputThreshold = 2, min.MAF = 0.03) {
   library(fork)
   library(MatrixEQTL)

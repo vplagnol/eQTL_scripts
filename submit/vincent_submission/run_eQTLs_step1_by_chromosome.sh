@@ -2,17 +2,17 @@
 
 Rbin=/share/apps/R-3.0.2/bin/R
 
-dataset="liver_Schadt"
-conditions="Liver"
-pvOutputThreshold=5
+#dataset="liver_Schadt"
+#conditions="Liver"
+#pvOutputThreshold=5
 
 #dataset=monocytes_Knight
 #conditions="normal IFN LPS2 LPS24 LPS2logFC LPS24logFC IFNlogFC"
 #pvOutputThreshold=5
 
-#dataset="WB_Franke"
-#conditions="WB"
-#pvOutputThreshold=5
+dataset="WB_Franke"
+conditions="WB"
+pvOutputThreshold=5
 
 #dataset="brain_UKBEC"
 #conditions="probesetCRBL"
@@ -20,8 +20,14 @@ pvOutputThreshold=5
 #pvOutputThreshold=6
 
 
+#dataset="GTex"
+#conditions="AdiposeSubcutaneous  ArteryTibial  Brain  HeartLeftVentricle  Lung  Muscle  Nerve  SkinSunExposedLowerleg  Thyroid  WholeBlood"
+#conditions="AdiposeSubcutaneous ArteryTibial BrainCaudatebasalganglia BrainCerebellarHemisphere BrainCerebellum BrainCortex BrainFrontalCortexBA9 BrainHippocampus BrainHypothalamus BrainNucleusaccumbensbasalganglia HeartLeftVentricle Lung Muscle Nerve SkinSunExposedLowerleg Thyroid transcript_AdiposeSubcutaneous WholeBlood"
+#pvOutputThreshold=5
 
-step1=FALSE
+
+
+step1=TRUE
 step2=TRUE
 step3=FALSE
 memory=1.9
@@ -29,10 +35,10 @@ memory=1.9
 
 
 if [[ "$step2" == "TRUE" ]]; then memory=3.9; fi
-if [[ "$step1" == "TRUE" ]]; then memory=23; fi
+if [[ "$step1" == "TRUE" ]]; then memory=18; fi
 
 
-memory=8.9
+#memory=8.9  ##step2 for WB and liver needs that sort of memory
 
 
 for condition in $conditions; do
@@ -79,7 +85,7 @@ my.tab <- run.eQTL (dataset,
 if (step2) {
 my.sum <- create.eQTL.summary (dataset, condition, min.MAF = 0.03, level = 'probe', pval.threshold = $pvOutputThreshold,
                                   base.folder = '/cluster/project8/vyp/eQTL_integration',
-                                  chromosome = as.character(chromosome), plot = FALSE)
+                                  chromosome = as.character(chromosome), plot = TRUE)
 }
 
 
