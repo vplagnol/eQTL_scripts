@@ -1,11 +1,13 @@
+#Explanation of what scripts do
+
+* Pickrell/create_Pickrell_input.R creates the "locus based" summary file with P-values, alleles, effect size... in one genomic region
 
 
+#Explanation of eQTL pipeline
 
-#### Here I store comments on what is what
+# Explanation of what folders contain
 
-
-
-#########expression_data folder
+## expression_data folder
 one file for each "condition", which can be a cell type, a time point, an activation
 for format of each file must be
 expression_[condition].RData
@@ -18,7 +20,7 @@ To be checked: The support.[condition] must include the column ensemblID to know
 TODO: go through scripts to understand exactly what is happening.
 
 
-######### genotypes folder
+## genotypes folder
 One file per chromosome, stored in snpStats format, called
 chr1
 chr2
@@ -35,7 +37,7 @@ Mandatory: genotypes$genotypes which is a snpStats object, snps ideally in rsid 
 Mandatory: genotypes$map file, with columns: SNP, allele.1, allele.2, position
 Optional: a ped file, genotypes$fam
 
-######### phenotypes folder
+## phenotypes folder
 Two potential files:
 binary.RData contain a single object named binary.pheno
 continuous.RData contains a single object named continuous.pheno
@@ -44,7 +46,7 @@ numeric matrix, columns are measurements and rows are sample IDs that MUST match
 Cut out columns to leave only metabolites
 Don't forget the row and column names.
 
-######## covariates folder
+## covariates folder
 basic is a file called
 covariates.tab
 tab delimited, must contain the colum "id" that matches the sample names

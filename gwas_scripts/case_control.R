@@ -1,7 +1,7 @@
 library(snpStats)
 
 dataset <- 'celiac_vanHeel'
-
+threshold <- 10^(-5)
 
 GWAS.folder <- paste0('data/', dataset, '/GWAS')
 if (!file.exists(GWAS.folder)) {dir.create(GWAS.folder)}
@@ -14,8 +14,10 @@ file.remove(list.files( fgwas.folder, full.name = TRUE))
 
 case.control.data <- paste0('data/', dataset, '/phenotypes/binary.RData')
 load(case.control.data)
+options(stringsAsFactors = FALSE)
 
 
+final.fgwas.table <- data.frame()
 first <- TRUE
 for (chromosome in 22:1) {
   message('Chromosome ', chromosome)
@@ -36,7 +38,6 @@ for (chromosome in 22:1) {
     
     
     my.sum <- col.summary( loc.geno )
-
     
     if (first) {
       first <- FALSE
@@ -63,7 +64,8 @@ for (chromosome in 22:1) {
                        PVAL = p.value ( my.tests),
                        POS = loc.map$position,
                        CHR = chromosome,
-                       N = sum(!is.na(my.table.pheno[, 'cc' ])),
+                       NCASE = sum( my.table.pheno[, 'cc' ] == 1, na.rm = TRUE),
+                       NCONTROL = sum( my.table.pheno[, 'cc' ] == 2, na.rm = TRUE),
                        beta = signif(effect, 4),
                        se.beta = signif(SE, 4),
                        phenotype = pheno)
@@ -76,8 +78,7 @@ for (chromosome in 22:1) {
     best.SNP.name <- as.character(res$SNPID[ best.SNP ])
     region <- 1
     
-    while (min.p < 10^(-6)) {
-
+    while (min.p < threshold) {
       
       r2.with.best.SNP <- ld (x = genotypes$genotypes, y = genotypes$genotypes[,best.SNP.name] , stats = 'R.squared')
       good.SNPs <- names(which(r2.with.best.SNP[,1] > 0.1))
@@ -98,6 +99,10 @@ for (chromosome in 22:1) {
       output.file <- paste0(fgwas.folder, '/GWAS_', pheno, '_chr', chromosome, '_region', region, '.tab')
       write.table(x = loc.res, file = output.file, sep = '\t', row.names = FALSE, quote = FALSE)
 
+      ###############
+      loc.res$SEGNUMBER <- paste0('chr', chromosome, '_region', region)
+      final.fgwas.table <- rbind.data.frame( final.fgwas.table, loc.res)
+      
       ######### now we finalize the process
       res <- res[ ! selected.SNPs, ]
       region <- region + 1
@@ -107,5 +112,13 @@ for (chromosome in 22:1) {
     }
   }
   
-  rm (list = c('res', 'best.SNP', 'min.p', 'output.file', 'region', 'loc.res', 'best.SNP.name', 'score', 'SE'))
+  rm (list = c('res', 'best.SNP', 'min.p', 'output.file', 'region', 'loc.res', 'best.SNP.name', 'score', 'SE', 'my.range', 'my.ld.range'))
 }
+
+fgwas.file <- paste0( GWAS.folder, '/fgwas_', pheno, '_input.tab')
+final.fgwas.table <- final.fgwas.table[ order(final.fgwas.table$CHR, final.fgwas.table$POS), ]
+write.table(x = final.fgwas.table, file = fgwas.file, sep = '\t', row.names = FALSE, quote = FALSE)
+
+
+my.cmd <- paste0('gzip -f ', fgwas.file)
+system( my.cmd )

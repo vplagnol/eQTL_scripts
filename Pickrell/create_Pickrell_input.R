@@ -39,10 +39,12 @@ create.Pickrell.input.file <- function (dataset,
     my.formula <- paste('exp ~ ', paste(covar.labels, collapse = ' + '))
     for (covar.loc in covar.labels) {expression.frame[, covar.loc] <- covariates[, covar.loc]}
   } else {
-    my.formula <- 'exp ~ 1'
+    my.formula <- 'exp ~ -1'
   }
   
 
+  allele.1 <- genotypes$map[ snp.name, ]$allele.1
+  allele.2 <- genotypes$map[ snp.name, ]$allele.2
   SNP.position <- genotypes$map[ snp.name, ]$position
   good.SNPs <- which ( genotypes$map$position > SNP.position - 500000 & genotypes$map$position < SNP.position + 500000)
   loc.geno <- genotypes$genotypes[, good.SNPs ]
@@ -76,6 +78,8 @@ create.Pickrell.input.file <- function (dataset,
                      N = sum(!is.na(expression.frame$exp)),
                      beta = signif(effect, 4),
                      se.beta = signif(SE, 4),
+                     allele.1 = allele.1,
+                     allele.2 = allele.2,
                      ProbeID = ProbeID)
 
   #### add the information about the imputation now
