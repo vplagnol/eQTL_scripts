@@ -63,7 +63,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
     if (level == 'gene') loc.eQTL <- subset(data, ensemblID == loc.gene)  ### take the subset of the file with the right probe
     if (level == 'probe') loc.eQTL <- subset(data, ProbeID == loc.gene)
     
-    best.row <- loc.eQTL[ which.min(loc.eQTL$p.value), ]  ##find the best SNP/probe P-value for that gene
+    best.row <- loc.eQTL[ which.min(loc.eQTL$p.value), ]  ##find the best SNP/probe P-value for that gene based on matrixEQTL
     loc.symbol <- best.row$Gene.name
     ProbeID <- as.character(best.row$ProbeID) ##the character bit is important for probe names that are numbers
     
@@ -84,7 +84,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
     if (min.p < 10^(-2)) {
       final <- rbind.data.frame(final, Pickrell.table)
       
-      my.list <- as.list(Pickrell.table [ which.min(Pickrell.table$PVAL),])
+      my.list <- as.list(Pickrell.table [ which.min(Pickrell.table$PVAL),])  ##this is where the best P based on snpStats P-value is selected
       my.list[[ 'distance.to.gene' ]] <- min( abs(best.row$position - best.row$gene.position.start), abs(best.row$position - best.row$gene.position.end) )
 
       output.pdf <- paste(oFolder.1.figs, '/chr_', chromosome, '_', condition, '_', best.row$SNP, '_Probe', best.row$ProbeID, '_', best.row$Gene.name, '.pdf', sep = '')

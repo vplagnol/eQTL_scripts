@@ -1,5 +1,6 @@
 #Explanation of what scripts do
 
+* eQTLs_scripts/create_eQTL_summary.R creates a summary file by running the snpStats analysis on all identified cis-eQTL loci based on matrixeQTL, then pulls the best SNP based on P-value and reports that best SNP in the summary table.
 * Pickrell/create_Pickrell_input.R creates the "locus based" summary file with P-values, alleles, effect size... in one genomic region
 
 
@@ -9,15 +10,20 @@
 
 ## expression_data folder
 one file for each "condition", which can be a cell type, a time point, an activation
-for format of each file must be
-expression_[condition].RData
+for format of each file must be: 
+* expression_[condition].RData 
 where [condition] will vary depending on the data.
-Each of these RData file must contain 2 objects:
+* Each of these RData file must contain 2 objects:
 [condition] and support.[condition]
 Condition is a matrix of numbers, with row.names that match the ProbeID column of the support file and colnames that match the different individuals in the dataset.
 
-To be checked: The support.[condition] must include the column ensemblID to know what gene one is referring to, as well as the Gene.name column which is human readable version of the ensembl ID. Now the code has been used for exons and such, in which case I think the Gene.name is used instead of ensemblID.
-TODO: go through scripts to understand exactly what is happening.
+The support.[condition] includes the following columns:
+* row names must be a unique identified, typically the probe (mandatory)
+* ensemblID (mandatory)
+* Gene.name (mandatory, human readable version of ensemblID)
+* gene.chromosome (optional, if missing inferred from ensemblID) 
+* gene.position.start (optional, if missing inferred from ensemblID) 
+* gene.position.end (optional, if missing inferred from ensemblID) 
 
 
 ## genotypes folder
