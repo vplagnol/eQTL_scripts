@@ -25,6 +25,8 @@ The support.[condition] includes the following columns:
 * gene.position.start (optional, if missing inferred from ensemblID) 
 * gene.position.end (optional, if missing inferred from ensemblID) 
 
+The scripts assume the expression data has already been normalised. 
+
 ### what if I use exon instead of gene based probes?
 
 ensemblID must remain to mark the gene but Gene.name becomes something like SORT1_ex5 to identify the exon of interest.
