@@ -15,12 +15,15 @@ source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
 
 
 
-run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 5, min.MAF = 0.03, force = TRUE) {
+run.eQTL <- function( dataset,
+                     condition,
+                     chromosome, start = 1, end = 300*10^6,
+                     pvOutputThreshold = 5, min.MAF = 0.03,
+                     force = TRUE,
+                     temp.folder = "/scratch2/vyp-scratch2/vincent/eQTLs",
+                     base.folder = "/cluster/project8/vyp/eQTL_integration") {
   library(snpStats)
   library(MatrixEQTL)
-  #temp.folder <- '/SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs'
-  temp.folder <- '/scratch2/vyp-scratch2/vincent/eQTLs'
-  base.folder <- '/cluster/project8/vyp/eQTL_integration'
 
   if (pvOutputThreshold < 1) {stop('Probably a misspecification of the pvalue output threshold, it should be given as -log10(p)')}
   
