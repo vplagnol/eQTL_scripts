@@ -52,8 +52,8 @@ genotypes is a list that contains:
 
 ## phenotypes folder
 Two potential files:
-binary.RData contain a single object named binary.pheno
-continuous.RData contains a single object named continuous.pheno
+* binary.RData contain a single object named binary.pheno
+* continuous.RData contains a single object named continuous.pheno
 
 numeric matrix, columns are measurements and rows are sample IDs that MUST match the genotypes
 Cut out columns to leave only metabolites
