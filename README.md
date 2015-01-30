@@ -46,9 +46,9 @@ chrY
 
 The name of the object must be genotypes in each file. 
 genotypes is a list that contains:
-Mandatory: genotypes$genotypes which is a snpStats object, snps ideally in rsid format
-Mandatory: genotypes$map file, with columns: SNP, allele.1, allele.2, position
-Optional: a ped file, genotypes$fam
+* Mandatory: genotypes$genotypes which is a snpStats object, snps ideally in rsid format
+* Mandatory: genotypes$map file, with columns: SNP, allele.1, allele.2, position. Make sure position is typed as integer. 
+* Optional: a ped file, genotypes$fam
 
 ## phenotypes folder
 Two potential files:
