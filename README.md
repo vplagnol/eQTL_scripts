@@ -11,25 +11,25 @@
 ## expression_data folder
 one file for each "condition", which can be a cell type, a time point, an activation
 for format of each file must be: 
-* expression_[condition].RData 
+* **expression_[condition].RData** 
 where [condition] will vary depending on the data.
-* Each of these RData file must contain 2 objects:
-[condition] and support.[condition]
-Condition is a matrix of numbers, with row.names that match the ProbeID column of the support file and colnames that match the different individuals in the dataset.
+* Each of these RData file must contain two R objects:
+```[condition]``` and ```support.[condition]```
+Condition is a matrix of numbers, with ```row.names``` that match the ProbeID column of the support file and colnames that match the different individuals in the dataset.
 
-The support.[condition] includes the following columns:
-* row names must be a unique identified, typically the probe (mandatory)
-* ensemblID (mandatory)
-* Gene.name (mandatory, human readable version of ensemblID)
-* gene.chromosome (optional, if missing inferred from ensemblID) 
-* gene.position.start (optional, if missing inferred from ensemblID) 
-* gene.position.end (optional, if missing inferred from ensemblID) 
+The ```support.[condition]``` includes the following columns:
+* ```row names``` must be a unique identified, typically the probe (mandatory)
+* ```ensemblID``` (mandatory)
+* ```Gene.name``` (mandatory, human readable version of ensemblID)
+* ```gene.chromosome``` (optional, if missing inferred from ensemblID) 
+* ```gene.position.start``` (optional, if missing inferred from ensemblID) 
+* ```gene.position.end``` (optional, if missing inferred from ensemblID) 
 
 The scripts assume the expression data has already been normalised. 
 
 ### what if I use exon instead of gene based probes?
 
-ensemblID must remain to mark the gene but Gene.name becomes something like SORT1_ex5 to identify the exon of interest.
+```ensemblID``` must remain to mark the gene but Gene.name becomes something like SORT1_ex5 to identify the exon of interest.
 
 
 
