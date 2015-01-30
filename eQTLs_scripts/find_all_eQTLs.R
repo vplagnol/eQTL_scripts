@@ -50,6 +50,11 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
   expression <- get(condition)
   support.expression <- get(paste('support', condition, sep = '.'))
 
+#### now a check for row.names
+  if ( sum(rownames(support.expression) != as.character(1:nrow(support.expression))) == 0) {
+    message("There does not seem to be any rownames in the support file. Are you sure your data fit the guidelines?")
+  }
+  
   shared.samples <- intersect(dimnames(expression)[[2]], dimnames(genotypes$genotypes)[[1]])
   n.samples <- length(shared.samples)
 
