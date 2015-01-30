@@ -15,7 +15,7 @@ source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
 
 
 
-run.eQTL <- function( dataset,
+run.eQTL <- function(dataset,
                      condition,
                      chromosome, start = 1, end = 300*10^6,
                      pvOutputThreshold = 5, min.MAF = 0.03,
