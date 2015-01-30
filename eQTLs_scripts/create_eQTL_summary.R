@@ -36,7 +36,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
   expression <- get(condition)
   
 ############### load the genotype data
-  genotype.file <- paste(base.folder, '/data/', dataset, '/genotypes/chr', chromosome, sep = '')
+  genotype.file <- file.path(base.folder, 'data', dataset, 'genotypes', 'chr', chromosome)
   load(genotype.file)
 
 ############ input eQTL 
