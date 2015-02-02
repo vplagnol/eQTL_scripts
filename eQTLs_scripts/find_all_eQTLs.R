@@ -1,4 +1,5 @@
-source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
+#source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
+#source('/cluster/project8/vyp/kitty/eQTL_scripts/eQTLs_scripts/tools.R')
 
 #force <- FALSE
 #pvOutputThreshold = 1e-4
@@ -15,12 +16,18 @@ source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
 
 
 
-run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 5, min.MAF = 0.03, force = TRUE) {
+run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 5, min.MAF = 0.03, force = TRUE, 
+   base.folder = '/cluster/project8/vyp/eQTL_integration', 
+   temp.folder = '/scratch2/vyp-scratch2/vincent/eQTLs') {
   library(snpStats)
   library(MatrixEQTL)
+
+  print(base.folder) 
+  print(temp.folder) 
+
   #temp.folder <- '/SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs'
-  temp.folder <- '/scratch2/vyp-scratch2/vincent/eQTLs'
-  base.folder <- '/cluster/project8/vyp/eQTL_integration'
+  #temp.folder <- '/scratch2/vyp-scratch2/vincent/eQTLs'
+  #base.folder <- '/cluster/project8/vyp/eQTL_integration'
 
   if (pvOutputThreshold < 1) {stop('Probably a misspecification of the pvalue output threshold, it should be given as -log10(p)')}
   
@@ -77,6 +84,8 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
   no.output <- make.matEQTL.expression (expression, output.file.GE)    
 
   output.file <- paste(temp.folder, '/', dataset, '_', condition, '_', chromosome, '_', start, '_', end, sep = '')
+
+  print(str(genotypes)) 
   support.genotypes <- make.matEQTL.geno (genotypes, chromosome, start, end, output.file)
 
   covar <- FALSE
