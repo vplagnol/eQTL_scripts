@@ -7,7 +7,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
                                 chromosome, plot = TRUE) {
   
   source(paste(base.folder, '/Pickrell/create_Pickrell_input.R', sep = ''))
-  source(paste(base.folder, '/scripts/plotting_functions/gviz_eqtls_v2.R', sep = ''))
+  source(paste(base.folder, '/plotting_functions/gviz_eqtls_v2.R', sep = ''))
   options(stringsAsFactors = FALSE)
 
   final <- data.frame()  ### that will be the final table as an input for fgwas
