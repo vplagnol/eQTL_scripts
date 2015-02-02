@@ -6,7 +6,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
                                 base.folder = '/cluster/project8/vyp/eQTL_integration',
                                 chromosome, plot = TRUE) {
   
-  source(paste(base.folder, '/scripts/Pickrell/create_Pickrell_input.R', sep = ''))
+  source(paste(base.folder, '/Pickrell/create_Pickrell_input.R', sep = ''))
   source(paste(base.folder, '/scripts/plotting_functions/gviz_eqtls_v2.R', sep = ''))
   options(stringsAsFactors = FALSE)
 
