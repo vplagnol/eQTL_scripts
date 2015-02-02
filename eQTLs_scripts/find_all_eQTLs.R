@@ -14,20 +14,6 @@
 #end <- .Machine$integer.max
 
 
-
-
-run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6, pvOutputThreshold = 5, min.MAF = 0.03, force = TRUE, 
-   base.folder = '/cluster/project8/vyp/eQTL_integration', 
-   temp.folder = '/scratch2/vyp-scratch2/vincent/eQTLs') {
-  library(snpStats)
-  library(MatrixEQTL)
-
-  print(base.folder) 
-  print(temp.folder) 
-
-  #temp.folder <- '/SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs'
-  #temp.folder <- '/scratch2/vyp-scratch2/vincent/eQTLs'
-  #base.folder <- '/cluster/project8/vyp/eQTL_integration'
 run.eQTL <- function(dataset,
                      condition,
                      chromosome, start = 1, end = 300*10^6,
