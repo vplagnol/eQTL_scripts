@@ -6,7 +6,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
                                 base.folder = '/cluster/project8/vyp/eQTL_integration',
                                 chromosome, plot = TRUE) {
   
-  source(paste(base.folder, '/scripts/Pickrell/create_Pickrell_input.R', sep = ''))
+  source(paste(base.folder, '/Pickrell/create_Pickrell_input.R', sep = ''))
   source(paste(base.folder, '/scripts/plotting_functions/gviz_eqtls_v2.R', sep = ''))
   options(stringsAsFactors = FALSE)
 
@@ -36,7 +36,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
   expression <- get(condition)
   
 ############### load the genotype data
-  genotype.file <- paste(base.folder, '/data/', dataset, '/genotypes/chr', chromosome, sep = '')
+  genotype.file <- file.path(base.folder, 'data', dataset, 'genotypes', 'chr', chromosome)
   load(genotype.file)
 
 ############ input eQTL 
@@ -93,7 +93,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
       my.list[[ 'output.file' ]] <- output.file
       
       if (plot) {
-        annotated <- plot.eQTL (chromosome = chr, positions = Pickrell.table$POS, pvalues = Pickrell.table$PVAL, output.pdf = output.pdf, gene.list = loc.symbol,
+        annotated <- plot.eQTL (chromosome = chromosome, positions = Pickrell.table$POS, pvalues = Pickrell.table$PVAL, output.pdf = output.pdf, gene.list = loc.symbol,
                                 gene.chromosome = best.row$gene.chromosome,
                                 gene.position.start = best.row$gene.position.start, gene.position.end = best.row$gene.position.end,
                                 gene.name = loc.symbol, gene.context = TRUE) ##plot a fancy graph

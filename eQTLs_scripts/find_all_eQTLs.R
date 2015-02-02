@@ -28,6 +28,15 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
   #temp.folder <- '/SAN/biomed/biomed14/vyp-scratch/vincent/eQTLs'
   #temp.folder <- '/scratch2/vyp-scratch2/vincent/eQTLs'
   #base.folder <- '/cluster/project8/vyp/eQTL_integration'
+run.eQTL <- function(dataset,
+                     condition,
+                     chromosome, start = 1, end = 300*10^6,
+                     pvOutputThreshold = 5, min.MAF = 0.03,
+                     force = TRUE,
+                     temp.folder = "/scratch2/vyp-scratch2/vincent/eQTLs",
+                     base.folder = "/cluster/project8/vyp/eQTL_integration") {
+  library(snpStats)
+  library(MatrixEQTL)
 
   if (pvOutputThreshold < 1) {stop('Probably a misspecification of the pvalue output threshold, it should be given as -log10(p)')}
   
@@ -57,6 +66,11 @@ run.eQTL <- function( dataset, condition, chromosome, start = 1, end = 300*10^6,
   expression <- get(condition)
   support.expression <- get(paste('support', condition, sep = '.'))
 
+#### now a check for row.names
+  if ( sum(rownames(support.expression) != as.character(1:nrow(support.expression))) == 0) {
+    message("There does not seem to be any rownames in the support file. Are you sure your data fit the guidelines?")
+  }
+  
   shared.samples <- intersect(dimnames(expression)[[2]], dimnames(genotypes$genotypes)[[1]])
   n.samples <- length(shared.samples)
 

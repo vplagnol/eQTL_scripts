@@ -10,17 +10,22 @@ Rbin=/share/apps/R-3.0.2/bin/R
 #conditions="normal IFN LPS2 LPS24 LPS2logFC LPS24logFC IFNlogFC"
 #pvOutputThreshold=5
 
-dataset="WB_Franke"
-conditions="WB"
-pvOutputThreshold=5
+#dataset="WB_Franke"
+#conditions="WB"
+#pvOutputThreshold=5
 
 #dataset="brain_UKBEC"
 #conditions="probesetCRBL"
 #conditions="probesetCRBL probesetFCTX probesetHIPP probesetMEDU probesetOCTX probesetPUTM probesetSNIG probesetTCTX probesetTHAL probesetWHMT"
-#pvOutputThreshold=6
+#conditions="core_AVERAGE"
+#pvOutputThreshold=5
 
+dataset="GTex"
+conditions="BrainCerebellum_isoform_ratios"
+pvOutputThreshold=5
 
 #dataset="GTex"
+#conditions="Muscle"
 #conditions="AdiposeSubcutaneous  ArteryTibial  Brain  HeartLeftVentricle  Lung  Muscle  Nerve  SkinSunExposedLowerleg  Thyroid  WholeBlood"
 #conditions="AdiposeSubcutaneous ArteryTibial BrainCaudatebasalganglia BrainCerebellarHemisphere BrainCerebellum BrainCortex BrainFrontalCortexBA9 BrainHippocampus BrainHypothalamus BrainNucleusaccumbensbasalganglia HeartLeftVentricle Lung Muscle Nerve SkinSunExposedLowerleg Thyroid transcript_AdiposeSubcutaneous WholeBlood"
 #pvOutputThreshold=5
@@ -35,7 +40,7 @@ memory=1.9
 
 
 if [[ "$step2" == "TRUE" ]]; then memory=3.9; fi
-if [[ "$step1" == "TRUE" ]]; then memory=18; fi
+if [[ "$step1" == "TRUE" ]]; then memory=5.9; fi
 
 
 #memory=8.9  ##step2 for WB and liver needs that sort of memory
