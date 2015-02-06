@@ -1,6 +1,6 @@
 #Explanation of what scripts do
 
-* [eQTLs_scripts/create_eQTL_summary.R](https://github.com/vplagnol/eQTL_scripts/blob/master/eQTLs_scripts/create_eQTL_summary.R) creates a summary file by running the snpStats analysis on all identified cis-eQTL loci based on matrixeQTL, then pulls the best SNP based on P-value and reports that best SNP in the summary table.
+* [eQTLs_scripts/create_eQTL_summary.R](https://github.com/vplagnol/eQTL_scripts/blob/master/eQTLs_scripts/create_eQTL_summary.R) creates a summary file by running the snpStats analysis on all identified cis-eQTL loci based on [matrixeQTL](http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/), then pulls the best SNP based on P-value and reports that best SNP in the summary table.
 * Pickrell/create_Pickrell_input.R creates the "locus based" summary file with P-values, alleles, effect size... in one genomic region
 
 
@@ -48,7 +48,7 @@ chrY
 The name of the object must be ```genotypes``` in each file. 
 The ```genotypes``` R object is a list that contains:
 * Mandatory: ```genotypes$genotypes``` which is a snpStats object, snps ideally in rsid format
-* Mandatory: ```genotypes$map``` file, with columns: SNP, allele.1, allele.2, position. Make sure position is typed as integer and that the rownames of the genotype$map data frame are the unique snp.names 
+* Mandatory: ```genotypes$map``` file, with columns: SNP, allele.1, allele.2, position. Make sure position is typed as integer and that the rownames of the ```genotype$map``` data frame are the unique snp.names 
 * Optional: a ped file, ```genotypes$fam```
 
 ## phenotypes folder
