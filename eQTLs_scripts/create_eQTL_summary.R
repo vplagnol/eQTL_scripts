@@ -6,8 +6,8 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
                                 base.folder = '/cluster/project8/vyp/eQTL_integration',
                                 chromosome, plot = TRUE) {
   
-  source(paste(base.folder, '/scripts/Pickrell/create_Pickrell_input.R', sep = ''))
-  source(paste(base.folder, '/scripts/plotting_functions/gviz_eqtls_v2.R', sep = ''))
+  source(paste(base.folder, '/Pickrell/create_Pickrell_input.R', sep = ''))
+  source(paste(base.folder, '/plotting_functions/gviz_eqtls_v2.R', sep = ''))
   options(stringsAsFactors = FALSE)
 
   final <- data.frame()  ### that will be the final table as an input for fgwas
@@ -36,7 +36,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
   expression <- get(condition)
   
 ############### load the genotype data
-  genotype.file <- paste(base.folder, '/data/', dataset, '/genotypes/chr', chromosome, sep = '')
+  genotype.file <- file.path(base.folder, 'data', dataset, 'genotypes', paste('chr', chromosome, sep = ""))
   load(genotype.file)
 
 ############ input eQTL 

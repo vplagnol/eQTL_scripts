@@ -1,4 +1,5 @@
-source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
+#source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
+#source('/cluster/project8/vyp/kitty/eQTL_scripts/eQTLs_scripts/tools.R')
 
 #force <- FALSE
 #pvOutputThreshold = 1e-4
@@ -11,8 +12,6 @@ source('/cluster/project8/vyp/eQTL_integration/scripts/eQTLs_scripts/tools.R')
 #chromosome <- '22'
 #start <- 1
 #end <- .Machine$integer.max
-
-
 
 
 run.eQTL <- function(dataset,
@@ -97,6 +96,8 @@ run.eQTL <- function(dataset,
   
   
   output.file <- paste(temp.folder, '/', dataset, '_', condition, '_', chromosome, '_', start, '_', end, sep = '')
+
+  print(str(genotypes)) 
   support.genotypes <- make.matEQTL.geno (genotypes, chromosome, start, end, output.file)
   message("Using file ", output.file, " to store the genotype data")
   
