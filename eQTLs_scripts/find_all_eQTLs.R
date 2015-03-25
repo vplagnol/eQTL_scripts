@@ -21,7 +21,8 @@ run.eQTL <- function(dataset,
                      pvOutputThreshold = 5, min.MAF = 0.03,
                      force = TRUE,
                      temp.folder = "/scratch2/vyp-scratch2/vincent/eQTLs",
-                     base.folder = "/cluster/project8/vyp/eQTL_integration") {
+                     base.folder = "/cluster/project8/vyp/eQTL_integration",
+                     checks = TRUE) {
   library(snpStats)
   library(MatrixEQTL)
 
@@ -46,6 +47,15 @@ run.eQTL <- function(dataset,
   input.genotypes <- paste(base.folder, '/data/', dataset, '/genotypes/chr', chromosome, sep = '')
   load(input.genotypes)
 
+######## A first sanity check, to make sure everything is in order
+  if (checks) {
+    discordant <- sum( row.names(genotypes$map) != dimnames(genotypes$genotypes)[[2]])
+    if (sum(discordant) > 0) {
+      stop("There seems to be a discordance between the row names of the map file and the SNP names of the genotype object")
+    }
+  }
+
+  
 ######### Loading the expression data
   message('Loading the expression data')
   input.file <- paste(base.folder, '/data/', dataset, '/expression_data/expression_', condition, '.RData', sep = '')
@@ -83,10 +93,13 @@ run.eQTL <- function(dataset,
   
   output.file.GE <- paste(temp.folder, '/', dataset, '_', condition, '_chr', chromosome, sep = '')
   no.output <- make.matEQTL.expression (expression, output.file.GE)    
-
+  message("Using file ", output.file.GE, " to store the expression data")
+  
+  
   output.file <- paste(temp.folder, '/', dataset, '_', condition, '_', chromosome, '_', start, '_', end, sep = '')
   support.genotypes <- make.matEQTL.geno (genotypes, chromosome, start, end, output.file)
-
+  message("Using file ", output.file, " to store the genotype data")
+  
   covar <- FALSE
   covar.file.name <- paste(base.folder, '/data/', dataset, '/covariates/covariates_', condition, '.tab', sep = '')
   if (!file.exists(covar.file.name)) {  covar.file.name <- paste(base.folder, '/data/', dataset, '/covariates/covariates.tab', sep = '')}
@@ -148,8 +161,8 @@ run.eQTL <- function(dataset,
     eQTL.data <- read.table(output_file_name, header = TRUE, stringsAsFactors = FALSE)
     eQTL.data$chromosome <- chromosome
     names(eQTL.data) <- replace(names(eQTL.data), names(eQTL.data) == 'gene', 'ProbeID') ###replace the poorly chosen column name gene with, instead, ProbeID
-    
-    ### add info from the SNP support file
+
+### add info from the SNP support file
     eQTL.data$position <- support.genotypes$position[ match(eQTL.data$SNP, row.names(support.genotypes)) ]
     eQTL.data$MAF <- support.genotypes$MAF[ match(eQTL.data$SNP, row.names(support.genotypes)) ]
     eQTL.data$Call.rate <- support.genotypes$Call.rate[ match(eQTL.data$SNP, row.names(support.genotypes)) ]
@@ -160,7 +173,7 @@ run.eQTL <- function(dataset,
     if ( sum( c('gene.position.start', 'gene.position.end', 'gene.chromosome') %in% names(support.expression)) < 3 ) {
       message('Using standard annotations because the support file does not have all the key data')
       print(head(support.expression))
-      annotations <- read.table('/cluster/project8/vyp/vincent/Software/pipeline/RNASeq/bundle/human/biomart/biomart_annotations_human.tab', header = TRUE)
+      annotations <- read.table('/cluster/project8/vyp/vincent/Software/RNASeq_pipeline/bundle/human/biomart/biomart_annotations_human.tab', header = TRUE)
       eQTL.data$gene.chromosome <- annotations$chromosome_name [ match( eQTL.data$ensemblID, table = annotations$EnsemblID) ]
       eQTL.data$gene.position.start <- annotations$start_position[ match( eQTL.data$ensemblID, table = annotations$EnsemblID) ]
       eQTL.data$gene.position.end <- annotations$end_position[ match( eQTL.data$ensemblID, table = annotations$EnsemblID) ]

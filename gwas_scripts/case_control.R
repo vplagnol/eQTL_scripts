@@ -1,4 +1,5 @@
 library(snpStats)
+library(IRanges)
 
 dataset <- 'celiac_vanHeel'
 threshold <- 10^(-5)
@@ -19,6 +20,8 @@ options(stringsAsFactors = FALSE)
 
 final.fgwas.table <- data.frame()
 first <- TRUE
+true.region.number <- 1
+
 for (chromosome in 22:1) {
   message('Chromosome ', chromosome)
   genotype.file <- paste0('data/celiac_vanHeel/genotypes/chr', chromosome)
@@ -35,7 +38,6 @@ for (chromosome in 22:1) {
     message('Now working with the column ', pheno)
     loc.geno <- genotypes$genotypes
     loc.map <- genotypes$map
-    
     
     my.sum <- col.summary( loc.geno )
     
@@ -77,6 +79,7 @@ for (chromosome in 22:1) {
     best.SNP <- which.min( res$PVAL )
     best.SNP.name <- as.character(res$SNPID[ best.SNP ])
     region <- 1
+    processed.file <- list()
     
     while (min.p < threshold) {
       
@@ -95,22 +98,53 @@ for (chromosome in 22:1) {
       #####
       selected.SNPs <- res$POS > my.ld.range[ 1 ] & res$POS < my.ld.range[ 2 ]
       loc.res <- res[ selected.SNPs, ]
+      processed.file[[ region ]] <- loc.res
+      region <- region + 1
 
-      output.file <- paste0(fgwas.folder, '/GWAS_', pheno, '_chr', chromosome, '_region', region, '.tab')
-      write.table(x = loc.res, file = output.file, sep = '\t', row.names = FALSE, quote = FALSE)
-
-      ###############
-      loc.res$SEGNUMBER <- paste0('chr', chromosome, '_region', region)
-      final.fgwas.table <- rbind.data.frame( final.fgwas.table, loc.res)
       
       ######### now we finalize the process
       res <- res[ ! selected.SNPs, ]
-      region <- region + 1
       min.p <- min(res$PVAL, na.rm = TRUE)
       best.SNP <- which.min( res$PVAL )
       best.SNP.name <- as.character(res$SNPID[ best.SNP ])      
     }
   }
+
+
+  ######## now we need to merge regions that should be merged, otherwise it is messy
+  n.regions.before <- length(processed.file)
+  if (n.regions.before > 0) {  ## if there is at least one peak identified
+    my.ranges <- data.frame(start = rep(NA, n.regions.before), end = rep(NA, n.regions.before))
+    for (r in 1:n.regions.before) {
+      my.range <- range ( processed.file[[ r ]]$POS )
+      my.ranges$start[ r ] <- my.range[ 1 ]
+      my.ranges$end[ r ] <- my.range[ 2 ]
+    }
+    
+    irang <- IRanges(start = my.ranges$start - 50000, end = my.ranges$end + 50000)
+    irang.red <- reduce(irang)
+    overl <- findOverlaps (subject = irang.red, query = irang)
+    
+    for (r in 1:length(irang.red)) {
+      regions.to.merge <- overl@queryHits[ overl@subjectHits == r  ]
+      if (length(regions.to.merge) == 0) stop("Makes no sense")
+      message("Number of regions to merge: ", length(regions.to.merge))
+      combined.region <- data.frame()
+      for (k in regions.to.merge) {combined.region <- rbind.data.frame( combined.region, processed.file[[ k ]]  )}
+      combined.region <- combined.region[ order(combined.region$POS), ]
+
+      
+      ###############
+      combined.region$SEGNUMBER <- paste0('chr', chromosome, '_region', true.region.number)
+      final.fgwas.table <- rbind.data.frame( final.fgwas.table, combined.region)
+      
+      ### and now we print the merged region
+      output.file <- paste0(fgwas.folder, '/GWAS_', pheno, '_chr', chromosome, '_region', true.region.number, '.tab')
+      write.table(x = combined.region, file = output.file, sep = '\t', row.names = FALSE, quote = FALSE)
+      true.region.number <- true.region.number + 1
+    }
+  }
+
   
   rm (list = c('res', 'best.SNP', 'min.p', 'output.file', 'region', 'loc.res', 'best.SNP.name', 'score', 'SE', 'my.range', 'my.ld.range'))
 }

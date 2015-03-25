@@ -19,6 +19,12 @@ pretty.names <- function(dataset, condition) {
     if (condition == 'logFC') text <- 'DC, mTB infected, logFC at 16h'
   }
 
+  if (dataset == 'monocytes_TB_Nejentsev') {
+    if (condition == 'Control') text <- 'Monocytes, Control'
+    if (condition == 'MTB') text <- 'Monocytes, MTB'
+    if (condition == 'logFC') text <- 'Monocytes, logFC'
+  }
+  
   if (dataset == 'monocytes_Knight') {
     if (condition == 'normal') text <- 'Monocytes, rested'
     if (condition == 'LPS2') text <- 'Monocytes, LPS 2h'

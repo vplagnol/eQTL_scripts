@@ -59,7 +59,7 @@ plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf
         support.loc <- support[good.rows, ]
         print(support.loc)
         
-        if (nrow(expr.data) > 1) {
+        if (nrow(expr.data.loc) > 1) {
           message('Multiple matching probes ', nrow(expr.data.loc))
           print(dimnames(expr.data.loc)[[1]])
         }
@@ -67,8 +67,9 @@ plot.eQTL <- function (choice.sets, snp.name, chromosome, gene.names, output.pdf
         expr.data.loc <- expr.data.loc[which.max(apply(expr.data.loc, MAR  = 1, FUN = median)),]  ##take the highest expressing probe for now
         pretty.type=pretty.names(names(choice.sets)[i], condition)
 
+        ##browser()
 ############### Now making sure the labels are pretty and involve the gene name if we selected by probes
-        if (!is.na( support.loc$Gene.name[1]) && loc.gene == support.loc$ProbeID[1]  && loc.gene != support.loc$Gene.name[1]) {  ## if the selected ID does not match the gene name
+        if (!is.na( support.loc$Gene.name[1]) && loc.gene == row.names(support.loc)[1]  && loc.gene != support.loc$Gene.name[1]) {  ## if the selected ID does not match the gene name
           my.label <- paste( row.names(support.loc)[ 1 ], ' / ', support.loc$Gene.name[1], sep = '')
           my.clean.gene <- support.loc$Gene.name[1]
         } else {

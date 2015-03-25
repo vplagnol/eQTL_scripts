@@ -1,6 +1,6 @@
 
 
-Rbin=/share/apps/R-3.0.2/bin/R
+Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 
 #dataset="liver_Schadt"
 #conditions="Liver"
@@ -20,8 +20,12 @@ Rbin=/share/apps/R-3.0.2/bin/R
 #conditions="core_AVERAGE"
 #pvOutputThreshold=5
 
-dataset="GTex"
-conditions="BrainCerebellum_isoform_ratios"
+#dataset="GTex"
+#conditions="BrainCerebellum_isoform_ratios"
+#pvOutputThreshold=5
+
+dataset="monocytes_TB_Nejentsev"
+conditions="Control MTB"
 pvOutputThreshold=5
 
 #dataset="GTex"
