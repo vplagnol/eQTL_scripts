@@ -25,7 +25,8 @@ Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 #pvOutputThreshold=5
 
 dataset="monocytes_TB_Nejentsev"
-conditions="Control MTB"
+#conditions="response Control MTB"
+conditions="response"
 pvOutputThreshold=5
 
 #dataset="GTex"
