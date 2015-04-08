@@ -44,24 +44,23 @@ do.peer <- function(x_trans, outFile_pca, samples.id, n.factors = 15) {
 # matrix of rpkm values that has been normalised and
 # genes with low expression values removed  
 
-normalise.RPKM <- function( rpkm, n.thresh = 10, rpkm.thresh = 0.1 ) { 
+normalise.RPKM <- function( rpkm, n.thresh = 10, rpkm.thresh = 0.1, log.norm = TRUE ) { 
 
 
-  #rpkm <- read.table(rpkm.fname, stringsAsFactor = FALSE, header = TRUE, sep = ",")
-  # rownames(rpkm) <- rpkm$ensemblID
-  # rpkm <- data.matrix(rpkm[,-c(1,2)]) 
-   
-   # Filter out low expression genes 
-   n.well.expressed <- apply(MAR = 1, rpkm, function(x) { sum(x > rpkm.thresh) } ) 
-   rpkm <- rpkm[n.well.expressed > n.thresh, ]  
-   
+   if (log.norm) {
+     ## First filter out low expression genes 
+     n.well.expressed <- apply(MAR = 1, rpkm, function(x) { sum(x > rpkm.thresh) } ) 
+     rpkm <- rpkm[n.well.expressed > n.thresh, ]  
+     
+     shift    <- 0.01 
+     rpkm     <- log2(rpkm + shift) 
+   }
+
    genes <- rownames(rpkm) 
    sampleIDs <- colnames(rpkm) 
- 
+   
    # Log and quantile normalise 
    library(preprocessCore)
-   shift    <- 0.01 
-   rpkm     <- log2(rpkm + shift) 
    rpkm     <- normalize.quantiles(rpkm) 
 
    # Outliers correction 
