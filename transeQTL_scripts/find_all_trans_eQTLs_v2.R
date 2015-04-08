@@ -2,9 +2,9 @@ find.trans.eQTLs <- function(base.folder = "/cluster/project8/vyp/eQTL_integrati
                              choice.sets,
                              chromosome.list = as.character(22:1),
                              min.MAF = 0.03,
-                             pval.discovery = 10^(-13),
+                             pval.discovery = 10^(-12),
                              pval.validation = 10^(-5),
-                             min.ngenes.per.module = 3,
+                             min.ngenes.per.module = 2,
                              pval.matrixeQTL = 5) {
 
   dataset <- names(choice.sets)[[ 1 ]]
