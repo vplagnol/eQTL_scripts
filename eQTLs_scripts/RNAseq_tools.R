@@ -27,7 +27,7 @@ do.peer <- function(x_trans, outFile_pca, samples.id, n.factors = 15) {
 
      names(factors)<- paste("PC", 1:n.factors, sep="")
 
-     factors$sample<- samples.id
+     factors$id <- samples.id
 
      write.table(factors,outFile_pca,quote=F,row.names=F,sep="\t")
 
@@ -44,11 +44,11 @@ do.peer <- function(x_trans, outFile_pca, samples.id, n.factors = 15) {
 # matrix of rpkm values that has been normalised and
 # genes with low expression values removed  
 
-normalise.RPKM <- function( rpkm.fname, n.thresh = 10, rpkm.thresh = 0.1 ) { 
+normalise.RPKM <- function( rpkm, n.thresh = 10, rpkm.thresh = 0.1 ) { 
 
-   rpkm <- read.table(rpkm.fname, stringsAsFactor = FALSE, header = TRUE, sep = ",")
-   rownames(rpkm) <- rpkm$ensemblID
-   rpkm <- data.matrix(rpkm[,-c(1,2)]) 
+   #rpkm <- read.table(rpkm.fname, stringsAsFactor = FALSE, header = TRUE, sep = ",")
+   #rownames(rpkm) <- rpkm$ensemblID
+   #rpkm <- data.matrix(rpkm[,-c(1,2)]) 
    
    # Filter out low expression genes 
    n.well.expressed <- apply(MAR = 1, rpkm, function(x) { sum(x > rpkm.thresh) } ) 
