@@ -58,6 +58,7 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
 
   nsignals <- 0
   for (loc.gene in list.genes) {  ### find each gene with a cis-eQTL
+    tryCatch({
     nsignals <- nsignals + 1
     
     if (level == 'gene') loc.eQTL <- subset(data, ensemblID == loc.gene)  ### take the subset of the file with the right probe
@@ -75,7 +76,9 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
                                                   base.folder = base.folder,
                                                   min.MAF = min.MAF,
                                                   ProbeID = ProbeID, chromosome = best.row$chromosome, snp.name = best.row$SNP)
-    
+  
+    if (is.null(Pickrell.table)) { next } 
+   
     Pickrell.table$Gene.name <- loc.symbol
     Pickrell.table$ensemblID <- best.row$ensemblID
     
@@ -91,21 +94,25 @@ create.eQTL.summary<- function (dataset, condition, min.MAF = 0.03, level = 'pro
       output.file <- paste(oFolder.1.files, '/chr', chromosome, '_', condition, '_', best.row$SNP, '_Probe', best.row$ProbeID, '_', best.row$Gene.name, '.tab', sep = '')
       my.list[[ 'output.pdf' ]] <- output.pdf
       my.list[[ 'output.file' ]] <- output.file
-      
+     
+       
       if (plot) {
         annotated <- plot.eQTL (chromosome = chromosome, positions = Pickrell.table$POS, pvalues = Pickrell.table$PVAL, output.pdf = output.pdf, gene.list = loc.symbol,
                                 gene.chromosome = best.row$gene.chromosome,
                                 gene.position.start = best.row$gene.position.start, gene.position.end = best.row$gene.position.end,
                                 gene.name = loc.symbol, gene.context = TRUE) ##plot a fancy graph
-      }
-      
-      
+      } 
+
       write.table(x = Pickrell.table, file = output.file, row.names = FALSE, sep = '\t', quote = FALSE)
       print(output.file)
       summary.table <- rbind.data.frame( summary.table, my.list)
     } else {
       cat('Problem with ', best.row$ensemblID, ' ', best.row$SNP, ' ', best.row$Gene.name, file = log.file, append = TRUE)
     }
+
+    }, error = function(e) { 
+       message("Error in plotting ", loc.symbol) 
+    }) 
   }
   
   message('Writing the summary in ', output.file.chrom)
