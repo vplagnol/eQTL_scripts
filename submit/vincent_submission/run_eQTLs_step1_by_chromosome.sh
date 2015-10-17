@@ -42,7 +42,7 @@ pvOutputThreshold=5
 
 
 step1=FALSE
-step2=FALSE
+step2=TRUE
 step3=TRUE
 memory=1.9
 
