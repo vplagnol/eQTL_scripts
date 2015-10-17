@@ -1,6 +1,6 @@
 
 
-Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
+Rbin=/cluster/project8/vyp/vincent/Software/R-3.2.2/bin/R
 
 #dataset="liver_Schadt"
 #conditions="Liver"
@@ -25,8 +25,13 @@ Rbin=/cluster/project8/vyp/vincent/Software/R-3.1.2/bin/R
 #pvOutputThreshold=5
 
 dataset="monocytes_TB_Nejentsev"
-conditions="logFC Control MTB"
+conditions="Control MTB"
 pvOutputThreshold=5
+
+#dataset="osteoblasts_Pastinen"
+#conditions="rested Dex24"
+#pvOutputThreshold=5
+
 
 #dataset="GTex"
 #conditions="Muscle"
@@ -36,9 +41,9 @@ pvOutputThreshold=5
 
 
 
-step1=TRUE
-step2=TRUE
-step3=FALSE
+step1=FALSE
+step2=FALSE
+step3=TRUE
 memory=1.9
 
 
