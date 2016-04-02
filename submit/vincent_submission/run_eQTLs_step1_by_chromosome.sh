@@ -1,6 +1,6 @@
 
 
-Rbin=/cluster/project8/vyp/vincent/Software/R-3.2.2/bin/R
+Rbin=/share/apps/R-3.2.2/bin/R
 
 #dataset="liver_Schadt"
 #conditions="Liver"
@@ -25,8 +25,9 @@ Rbin=/cluster/project8/vyp/vincent/Software/R-3.2.2/bin/R
 #pvOutputThreshold=5
 
 dataset="monocytes_TB_Nejentsev"
-conditions="Control MTB"
+conditions="Control MTB BCG"
 pvOutputThreshold=5
+
 
 #dataset="osteoblasts_Pastinen"
 #conditions="rested Dex24"
@@ -41,9 +42,9 @@ pvOutputThreshold=5
 
 
 
-step1=FALSE
+step1=TRUE
 step2=TRUE
-step3=TRUE
+step3=FALSE
 memory=1.9
 
 
@@ -92,6 +93,7 @@ my.tab <- run.eQTL (dataset,
                      condition, 
                      chromosome = as.character(chromosome), 
                      start = 1, end = 300*10^6, 
+                     use.covariates.if.available = TRUE,
                      pvOutputThreshold = $pvOutputThreshold, 
                      force = TRUE, min.MAF = 0.05)
 }
@@ -105,10 +107,14 @@ my.sum <- create.eQTL.summary (dataset, condition, min.MAF = 0.03, level = 'prob
 
 #### and now the trans eQTL modules
 if (step3) {
-  res <- find.all.trans.eQTLs (choice.sets, min.MAF = 0.05, 
-                               chromosome = as.character(chromosome), min.gene.module = 6, 
-                               pval.threshold = $pvOutputThreshold, 
-                               with.pca = FALSE, plot = FALSE, run.stepwise = TRUE)
+
+  choice.sets <- list( dataset = condition)
+
+  res <- find.all.trans.eQTLs (choice.sets, min.MAF = 0.03, 
+                               chromosome.list = as.character(chromosome), min.gene.module = 2, 
+                               pval.discovery = 10^(-12),
+                               pval.validation = 10^(-5))
+
 }
 
 

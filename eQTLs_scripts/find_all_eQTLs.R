@@ -19,7 +19,8 @@ run.eQTL <- function(dataset,
                      chromosome, start = 1, end = 300*10^6,
                      pvOutputThreshold = 5, min.MAF = 0.03,
                      force = TRUE,
-                     temp.folder = "/scratch2/vyp-scratch2/vincent/eQTLs",
+                     use.covariates.if.available = TRUE,
+                     temp.folder = "/cluster/scratch3/vyp-scratch2/vincent/eQTLs",
                      base.folder = "/cluster/project8/vyp/eQTL_integration",
                      checks = TRUE) {
   library(snpStats)
@@ -103,10 +104,10 @@ run.eQTL <- function(dataset,
   
   covar <- FALSE
   covar.file.name <- paste(base.folder, '/data/', dataset, '/covariates/covariates_', condition, '.tab', sep = '')
-  if (!file.exists(covar.file.name)) {  covar.file.name <- paste(base.folder, '/data/', dataset, '/covariates/covariates.tab', sep = '')}
+  if (!file.exists(covar.file.name)) { covar.file.name <- paste(base.folder, '/data/', dataset, '/covariates/covariates.tab', sep = '')}
 
   
-  if (file.exists(covar.file.name)) {
+  if ( use.covariates.if.available && (file.exists(covar.file.name))) {
     message('Covariate file is ', covar.file.name)
     covariates <- read.table(covar.file.name, header = TRUE)
     covar <- TRUE

@@ -5,7 +5,8 @@ find.trans.eQTLs <- function(base.folder = "/cluster/project8/vyp/eQTL_integrati
                              pval.discovery = 10^(-12),
                              pval.validation = 10^(-5),
                              min.ngenes.per.module = 2,
-                             pval.matrixeQTL = 5) {
+                             pval.matrixeQTL = 5,
+                             robust.expression.genes = NULL) {
 
   dataset <- names(choice.sets)[[ 1 ]]
   condition <- as.character(choice.sets[1])
@@ -22,6 +23,8 @@ find.trans.eQTLs <- function(base.folder = "/cluster/project8/vyp/eQTL_integrati
     data <- read.table(input.file, stringsAsFactors = FALSE, header = TRUE)
 
     data.discovery <- subset(data, p.value <  pval.discovery & MAF > min.MAF & !cis.eQTL & !gene.chromosome %in% c("X", "Y") & !is.na(gene.position.start))
+    if (!is.null(robust.expression.genes)) data.discovery <- subset(data.discovery, ensemblID %in% robust.expression.genes)
+    
     if (nrow(data.discovery) > 0) {
       message("Findings in step 1: ", nrow(data.discovery))
       validation.set <- subset(data, SNP %in% data.discovery$SNP & p.value < pval.validation & ! cis.eQTL )
@@ -37,8 +40,3 @@ find.trans.eQTLs <- function(base.folder = "/cluster/project8/vyp/eQTL_integrati
 }
 
 
-my.choice <- list("monocytes_TB_Nejentsev" = c('MTB'))
-transeQTLs <- find.trans.eQTLs(choice.sets = my.choice)
-transeQTLs <- subset(transeQTLs, !( chromosome == 17 & abs(44061023 - position) < 1000000)) ## pretty sure this is a silly artifact
-
-write.csv(x = transeQTLs, file = "transeQTLs_Sergey_MTB.csv", row.names = FALSE)
