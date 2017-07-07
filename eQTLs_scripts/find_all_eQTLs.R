@@ -20,7 +20,7 @@ run.eQTL <- function(dataset,
                      pvOutputThreshold = 5, min.MAF = 0.03,
                      force = TRUE,
                      use.covariates.if.available = TRUE,
-                     temp.folder = "/cluster/scratch3/vyp-scratch2/vincent/eQTLs",
+                     temp.folder = "/SAN/biomed/biomed14/vyp-scratch/vincent/temp",
                      base.folder = "/cluster/project8/vyp/eQTL_integration",
                      checks = TRUE) {
   library(snpStats)

@@ -25,7 +25,8 @@ Rbin=/share/apps/R-3.2.2/bin/R
 #pvOutputThreshold=5
 
 dataset="monocytes_TB_Nejentsev"
-conditions="Control MTB BCG"
+#conditions="Control MTB BCG"
+conditions="Controlex"
 pvOutputThreshold=5
 
 
