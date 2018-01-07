@@ -1,6 +1,7 @@
 
 
 Rbin=/share/apps/R-3.2.2/bin/R
+temp_id=vincent
 
 #dataset="liver_Schadt"
 #conditions="Liver"
@@ -26,7 +27,7 @@ Rbin=/share/apps/R-3.2.2/bin/R
 
 dataset="monocytes_TB_Nejentsev"
 #conditions="Control MTB BCG"
-conditions="Controlex"
+conditions="Control"
 pvOutputThreshold=5
 
 
@@ -78,9 +79,10 @@ getArgs <- function() {
 ### define the dataset(s) of interest
 dataset <- '$dataset'
 condition <- '$condition'
-
+temp_id <- '$temp_id'
 
 myArgs <- getArgs()
+
 chromosome <- myArgs[[ 'chromosome' ]]
 
 step1 <- $step1
@@ -96,6 +98,7 @@ my.tab <- run.eQTL (dataset,
                      start = 1, end = 300*10^6, 
                      use.covariates.if.available = TRUE,
                      pvOutputThreshold = $pvOutputThreshold, 
+                     temp.folder = paste0('/SAN/biomed/biomed14/vyp-scratch/vincent/temp_', temp_id),
                      force = TRUE, min.MAF = 0.05)
 }
 

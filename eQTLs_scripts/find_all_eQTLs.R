@@ -92,10 +92,8 @@ run.eQTL <- function(dataset,
   
 ############
   message('Output file in ', output_file_name)
-  ## snpspos data.frame object with information about SNP locations, must have 3 columns - SNP name, chromosome, and position, like this: snpid chr pos
-  ## genepos  data.frame with information about transcript locations, must have 4 columns - the name, chromosome, and positions of the left and right ends geneid chr left right
 
-  
+  if (!file.exists(temp.folder)) dir.create(temp.folder)
   output.file.GE <- paste(temp.folder, '/', dataset, '_', condition, '_chr', chromosome, sep = '')
   no.output <- make.matEQTL.expression (expression, output.file.GE)    
   message("Using file ", output.file.GE, " to store the expression data")
@@ -118,7 +116,8 @@ run.eQTL <- function(dataset,
     row.names(covariates) <- covariates$id
     covariates <- covariates[ shared.samples, ]
     covariates <- covariates[, c('id', subset(names(covariates), names(covariates) != 'id')) ]  ##make sure that id is the first column
-    matrixeQTL.covar.file <- paste(base.folder, '/data/', dataset, '/covariates/covariates_', condition, '_chr', chromosome, '.matrixeQTL', sep = '')
+    ##matrixeQTL.covar.file <- paste(base.folder, '/data/', dataset, '/covariates/covariates_', condition, '_chr', chromosome, '.matrixeQTL', sep = '')
+    matrixeQTL.covar.file <- paste(temp.folder, '/covariates_', condition, '_chr', chromosome, '.matrixeQTL', sep = '')
     write.table(x = t(as(covariates, 'matrix')), file = matrixeQTL.covar.file, row.names = TRUE, col.names = FALSE, quote = FALSE, sep = '\t')
   }
   
@@ -153,6 +152,8 @@ run.eQTL <- function(dataset,
 
 
     if (withPos) {
+      ## snpspos data.frame object with information about SNP locations, must have 3 columns - SNP name, chromosome, and position, like this: snpid chr pos
+      ## genepos  data.frame with information about transcript locations, must have 4 columns - the name, chromosome, and positions of the left and right ends geneid chr left right
 
       snpspos <- genotypes$map %>%
         dplyr::rename(snpid = SNP, chr = chromosome, pos = position) %>%
@@ -184,7 +185,7 @@ run.eQTL <- function(dataset,
                        genepos = genepos,
                        cisDist = 500000,
                        pvalue.hist = FALSE,
-                       min.pv.by.genesnp = FALSE,
+                       min.pv.by.genesnp = TRUE,
                        noFDRsaveMemory = FALSE)
     } else  {
       me = Matrix_eQTL_engine(
