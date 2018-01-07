@@ -205,7 +205,7 @@ run.eQTL <- function(dataset,
     eQTL.data <- read.table(output_file_name, header = TRUE, stringsAsFactors = FALSE)
     if (withPos) {
       eQTL.data.cis <- read.table(paste0(output_file_name, ".cis"), header = TRUE, stringsAsFactors = FALSE)
-      eQTL.data <- dplyr::bind_rows(eQTL.data, eQTL.data.cis)
+      eQTL.data <- dplyr::bind_rows(eQTL.data, eQTL.data.cis) %>% dplyr::arrange(p.value)
     }
     
     eQTL.data$chromosome <- chromosome
