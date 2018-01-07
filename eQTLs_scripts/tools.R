@@ -52,6 +52,7 @@ make.matEQTL.geno <- function (genotypes, chromosome, start, end, output.file, m
   message('Preparing a matrixEQTL genotype dataset')
 
   good.SNPs <- which ( genotypes$map$position >= start & genotypes$map$position <= end)
+  message("Number of SNPs: ", length(good.SNPs))
   snpStats.format <- genotypes$genotypes[, good.SNPs]
   support.data <- col.summary(snpStats.format)
   support <- genotypes$map[ good.SNPs, ]

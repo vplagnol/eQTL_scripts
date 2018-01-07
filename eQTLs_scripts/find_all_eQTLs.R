@@ -22,9 +22,11 @@ run.eQTL <- function(dataset,
                      use.covariates.if.available = TRUE,
                      temp.folder = "/SAN/biomed/biomed14/vyp-scratch/vincent/temp",
                      base.folder = "/cluster/project8/vyp/eQTL_integration",
+                     withPos = TRUE,
                      checks = TRUE) {
   library(snpStats)
   library(MatrixEQTL)
+  library(dplyr)
 
   if (pvOutputThreshold < 1) {stop('Probably a misspecification of the pvalue output threshold, it should be given as -log10(p)')}
   
@@ -90,16 +92,18 @@ run.eQTL <- function(dataset,
   
 ############
   message('Output file in ', output_file_name)
+  ## snpspos data.frame object with information about SNP locations, must have 3 columns - SNP name, chromosome, and position, like this: snpid chr pos
+  ## genepos  data.frame with information about transcript locations, must have 4 columns - the name, chromosome, and positions of the left and right ends geneid chr left right
+
   
   output.file.GE <- paste(temp.folder, '/', dataset, '_', condition, '_chr', chromosome, sep = '')
   no.output <- make.matEQTL.expression (expression, output.file.GE)    
   message("Using file ", output.file.GE, " to store the expression data")
   
-  
   output.file <- paste(temp.folder, '/', dataset, '_', condition, '_', chromosome, '_', start, '_', end, sep = '')
 
-  print(str(genotypes)) 
   support.genotypes <- make.matEQTL.geno (genotypes, chromosome, start, end, output.file)
+
   message("Using file ", output.file, " to store the genotype data")
   
   covar <- FALSE
@@ -136,6 +140,23 @@ run.eQTL <- function(dataset,
     gene$fileSkipColumns = 1 # one column of row labels
     gene$fileSliceSize = 2000 # read file in slices of 2,000 rows
     gene$LoadFile(output.file.GE)
+
+    snpspos <- data.frame(snpid = rownames(snps))
+    snpspos <- genotypes$map %>%
+      dplyr::rename(snpid = SNP, chr = chromosome, pos = position) %>%
+        dplyr::select(snpid, chr, pos)
+    
+    genepos <- data.frame(geneid = rownames(gene))
+    if ( sum( c('gene.position.start', 'gene.position.end', 'gene.chromosome') %in% names(support.expression)) < 3 ) {
+      message('Using standard annotations because the support file does not have all the key data')
+      print(head(support.expression))
+      annotations <- read.table('/cluster/project8/vyp/vincent/Software/RNASeq_pipeline/bundle/human/biomart/biomart_annotations_human.tab',
+                                header = TRUE) %>%
+                                  dplyr::rename(geneid = EnsemblID, chr = chromosome_name, left = start_position, right = end_position)
+      genepos <- dplyr::left_join(genepos, annotations[, c("geneid", "chr", "left", "right")]) %>%
+        dplyr::filter(!is.na(left))
+    }
+    
       
     cvrt = SlicedData$new();
     cvrt$fileDelimiter = "\t"; # the TAB character
@@ -146,21 +167,46 @@ run.eQTL <- function(dataset,
       message('There is a covariate file in ', matrixeQTL.covar.file)
       cvrt$LoadFile(matrixeQTL.covar.file);
     }
-  
-    me = Matrix_eQTL_engine(
-      snps = snps,
-      gene = gene,
-      cvrt = cvrt,
-      output_file_name = output_file_name,
-      pvOutputThreshold = 10^-(pvOutputThreshold),
-      useModel = useModel,
-      errorCovariance = errorCovariance,
-      verbose = TRUE,
-      pvalue.hist = TRUE,
-      min.pv.by.genesnp = FALSE,
-      noFDRsaveMemory = FALSE);
 
+
+    if (withPos) {
+      Matrix_eQTL_main(snps = snps,
+                       gene = gene,
+                       cvrt = cvrt,
+                       output_file_name = output_file_name,
+                       pvOutputThreshold = 10^-(pvOutputThreshold),
+                       useModel = modelLINEAR,
+                       errorCovariance = numeric(),
+                       verbose = TRUE,
+                       output_file_name.cis = paste0(output_file_name, ".cis"),
+                       pvOutputThreshold.cis = 1e-2,
+                       snpspos = snpspos,
+                       genepos = genepos,
+                       cisDist = 500000,
+                       pvalue.hist = FALSE,
+                       min.pv.by.genesnp = FALSE,
+                       noFDRsaveMemory = FALSE)
+    } else  {
+      me = Matrix_eQTL_engine(
+        snps = snps,
+        gene = gene,
+        cvrt = cvrt,
+        output_file_name = output_file_name,
+        pvOutputThreshold = 10^-(pvOutputThreshold),
+        useModel = useModel,
+        errorCovariance = errorCovariance,
+        verbose = TRUE,
+        pvalue.hist = TRUE,
+        min.pv.by.genesnp = FALSE,
+        noFDRsaveMemory = FALSE)
+    }
+    
     eQTL.data <- read.table(output_file_name, header = TRUE, stringsAsFactors = FALSE)
+    if (withPos) {
+      eQTL.data.cis <- read.table(paste0(output_file_name, ".cis"), header = TRUE, stringsAsFactors = FALSE)
+      eQTL.data <- dplyr::bind_rows(eQTL.data, eQTL.data.cis)
+    }
+    
     eQTL.data$chromosome <- chromosome
     names(eQTL.data) <- replace(names(eQTL.data), names(eQTL.data) == 'gene', 'ProbeID') ###replace the poorly chosen column name gene with, instead, ProbeID
 
