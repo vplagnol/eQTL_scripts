@@ -141,23 +141,6 @@ run.eQTL <- function(dataset,
     gene$fileSliceSize = 2000 # read file in slices of 2,000 rows
     gene$LoadFile(output.file.GE)
 
-    snpspos <- data.frame(snpid = rownames(snps))
-    snpspos <- genotypes$map %>%
-      dplyr::rename(snpid = SNP, chr = chromosome, pos = position) %>%
-        dplyr::select(snpid, chr, pos)
-    
-    genepos <- data.frame(geneid = rownames(gene))
-    if ( sum( c('gene.position.start', 'gene.position.end', 'gene.chromosome') %in% names(support.expression)) < 3 ) {
-      message('Using standard annotations because the support file does not have all the key data')
-      print(head(support.expression))
-      annotations <- read.table('/cluster/project8/vyp/vincent/Software/RNASeq_pipeline/bundle/human/biomart/biomart_annotations_human.tab',
-                                header = TRUE) %>%
-                                  dplyr::rename(geneid = EnsemblID, chr = chromosome_name, left = start_position, right = end_position)
-      genepos <- dplyr::left_join(genepos, annotations[, c("geneid", "chr", "left", "right")]) %>%
-        dplyr::filter(!is.na(left))
-    }
-    
-      
     cvrt = SlicedData$new();
     cvrt$fileDelimiter = "\t"; # the TAB character
     cvrt$fileOmitCharacters = "NA"; # denote missing values;
@@ -170,6 +153,23 @@ run.eQTL <- function(dataset,
 
 
     if (withPos) {
+
+      snpspos <- genotypes$map %>%
+        dplyr::rename(snpid = SNP, chr = chromosome, pos = position) %>%
+          dplyr::select(snpid, chr, pos)
+      
+      genepos <- data.frame(geneid = rownames(gene))
+      if ( sum( c('gene.position.start', 'gene.position.end', 'gene.chromosome') %in% names(support.expression)) < 3 ) {
+        message('Using standard annotations because the support file does not have all the key data')
+        print(head(support.expression))
+        annotations <- read.table('/cluster/project8/vyp/vincent/Software/RNASeq_pipeline/bundle/human/biomart/biomart_annotations_human.tab',
+                                  header = TRUE) %>%
+                                    dplyr::rename(geneid = EnsemblID, chr = chromosome_name, left = start_position, right = end_position)
+        genepos <- dplyr::left_join(genepos, annotations[, c("geneid", "chr", "left", "right")]) %>%
+          dplyr::filter(!is.na(left))
+      }
+
+      
       Matrix_eQTL_main(snps = snps,
                        gene = gene,
                        cvrt = cvrt,
